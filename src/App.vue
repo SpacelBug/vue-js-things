@@ -1,10 +1,23 @@
-<template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+<template id="app">
+  <h2>D3 js graphs</h2>
+
+  <graphs-view/>
 </template>
+
+<script>
+import GraphsView from "@/views/GraphsView";
+
+export default {
+  name: "App",
+  components: {
+    GraphsView
+  },
+  data() { return {
+
+    }
+  }
+}
+</script>
 
 <style>
 #app {
