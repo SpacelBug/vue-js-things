@@ -45,7 +45,6 @@ export default {
       this.line = d3.line()
         .x(d => this.xScale(new Date(d[this.xName])))
         .y(d => this.yScale(d[this.yName]))
-        .curve(d3.curveStep)
         .context(this.context)
     },
     plot() {

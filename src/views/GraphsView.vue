@@ -1,14 +1,17 @@
 <template>
   <linechart-canvas :data="linechartData" :x-name="'date'" :y-name="'close'"/>
+  <linechart-web-gl></linechart-web-gl>
 </template>
 
 <script>
 import LinechartCanvas from "@/components/LinechartCanvas";
+import LinechartWebGl from "@/components/LinechartWebGl";
 
 export default {
   name: "Graphs",
   components: {
-    LinechartCanvas
+    LinechartCanvas,
+    LinechartWebGl,
   },
   data() { return {
       linechartData: [
