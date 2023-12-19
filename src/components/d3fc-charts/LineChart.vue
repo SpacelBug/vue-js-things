@@ -55,13 +55,15 @@ export default {
     async plotSvg() {
       console.log('plot svg', this.chartData, this.xScale.domain(), this.yScale.domain())
 
-
       let line = fc.seriesSvgLine()
           .crossValue(d => d[this.xName])
           .mainValue(d => d[this.yName])
           .xScale(this.xScale)
           .yScale(this.yScale)
-
+          .decorate((selection) => {
+              selection.enter()
+                  .style('stroke', '#5185b9');
+          })
 
       d3.select(this.$refs.group)
           .datum(this.chartData)
