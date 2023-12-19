@@ -1,6 +1,8 @@
 <template>
-  <linechart-canvas :data="linechartData" :x-name="'date'" :y-name="'close'"/>
-  <linechart-web-gl></linechart-web-gl>
+  <div class="chart-container">
+    <linechart-canvas :chart-caption="linechartData" :x-name="'date'" :y-name="'close'"/>
+    <linechart-web-gl></linechart-web-gl>
+  </div>
 </template>
 
 <script>
@@ -32,5 +34,8 @@ export default {
 </script>
 
 <style scoped>
-
+.chart-container{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
 </style>

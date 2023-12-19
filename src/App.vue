@@ -1,16 +1,20 @@
 <template id="app">
-  <h2>D3 js graphs</h2>
-
-  <graphs-view/>
+  <div class="header">
+    <h2>D3 js graphs</h2>
+    <div class="pages">
+      <router-link to="graphs">Graphs</router-link>
+      <router-link to="examples">D3FC train</router-link>
+    </div>
+  </div>
+  <router-view></router-view>
 </template>
 
 <script>
-import GraphsView from "@/views/GraphsView";
 
 export default {
   name: "App",
   components: {
-    GraphsView
+
   },
   data() { return {
 
@@ -20,24 +24,27 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+body{
+  background-color: #2d2c2c;
+  color: white;
+  margin: 0;
 }
-
-nav {
-  padding: 30px;
+h2{
+  margin: 0;
+  padding: 16px;
 }
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.header{
+  background-color: #212020;
 }
-
-nav a.router-link-exact-active {
-  color: #42b983;
+.pages{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  font-weight: bolder;
+  padding: 16px 16px;
+}
+.pages a{
+  font-size: 18px;
+  color: white;
 }
 </style>
