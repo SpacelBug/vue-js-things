@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import LineChart from "@/components/Examples/LineChart";
+import LineChart from "@/components/d3fc-charts/LineChart";
 
 export default {
   name: "ChartExamples",
