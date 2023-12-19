@@ -1,6 +1,6 @@
 <template>
   <div ref="target">
-    <h4>{{chartCaption}}</h4>
+    <h4>{{chartCaption}}<template v-if="plottingTime && showPlottingTime"> ({{ plottingTime }}ms)</template></h4>
     <svg v-if="type === 'svg'" :width="width" :height="height">
       <g ref="group"></g>
     </svg>
@@ -23,9 +23,12 @@ export default {
     height: {type: Number, default: 400},
     type: {type: String, default: 'svg'},
     chartCaption: {type: String, default: 'LineChart'},
-    chartStrokeColor: {type: String, default: '#5185b9'}
+    chartStrokeColor: {type: String, default: '#5185b9'},
+
+    showPlottingTime: {type: Boolean, default: false},
   },
   data() { return {
+      plottingTime: null,
     }
   },
   computed: {
@@ -41,6 +44,7 @@ export default {
     }
   },
   mounted() {
+    let startTime = new Date().getTime()
     switch (this.type) {
       case 'svg':
         this.plotSvg()
@@ -51,6 +55,7 @@ export default {
       case 'webgl':
         this.plotWebGl()
     }
+    this.plottingTime = (new Date().getTime() - startTime)
   },
   methods: {
     async plotSvg() {
