@@ -36,7 +36,7 @@ export default {
     yScale() {
       return d3.scaleLinear()
           .domain(d3.extent(this.chartData.map((d)=>{return d[this.yName]})))
-          .range([0, this.height])
+          .range([this.height, 0])
     }
   },
   mounted() {
