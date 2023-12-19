@@ -54,8 +54,6 @@ export default {
   },
   methods: {
     async plotSvg() {
-      console.log('plot svg', this.chartData, this.xScale.domain(), this.yScale.domain())
-
       let line = fc.seriesSvgLine()
           .crossValue(d => d[this.xName])
           .mainValue(d => d[this.yName])
@@ -73,8 +71,6 @@ export default {
     plotCanvas() {
       let canvas = this.$refs.canvas
 
-      console.log('plot canvas', this.chartData, this.xScale.domain(), this.yScale.domain())
-
       let ctx = canvas.getContext('2d')
 
       let line = fc.seriesCanvasLine()
@@ -91,8 +87,6 @@ export default {
     },
     plotWebGl() {
       let canvas = this.$refs.canvas
-
-      console.log('plot webgl', this.chartData, this.xScale.domain(), this.yScale.domain())
 
       let ctx = canvas.getContext('webgl')
 
