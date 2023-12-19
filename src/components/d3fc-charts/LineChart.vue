@@ -82,6 +82,9 @@ export default {
           .xScale(this.xScale)
           .yScale(this.yScale)
           .context(ctx)
+          .decorate((context, datum, index) => {
+              context.strokeStyle = '#5185b9';
+          });
 
       line(this.chartData)
     },
@@ -98,6 +101,14 @@ export default {
           .xScale(this.xScale)
           .yScale(this.yScale)
           .context(ctx)
+          .decorate((program, data) => {
+              fc.webglStrokeColor()
+                  .value((_, i) => {
+                const rgba = d3.color('#5185b9');
+                return [rgba.r / 255, rgba.g / 255, rgba.b / 255, rgba.opacity];
+                })
+                .data(data)(program);
+          });
 
       line(this.chartData)
     },
