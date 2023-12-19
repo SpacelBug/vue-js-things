@@ -1,10 +1,10 @@
 <template>
   <div ref="target">
     <h4>{{chartCaption}}</h4>
-    <svg v-if="type === 'svg'">
+    <svg v-if="type === 'svg'" :width="width" :height="height">
       <g ref="group"></g>
     </svg>
-    <canvas v-else ref="canvas"/>
+    <canvas v-else ref="canvas" :width="width" :height="height"/>
   </div>
 </template>
 
@@ -19,8 +19,8 @@ export default {
     xName: {type: String, default: 'x'},
     yName: {type: String, default: 'y'},
 
-    width: 400,
-    height: 400,
+    width: {type: Number, default: 400},
+    height: {type: Number, default: 400},
     type: {type: String, default: 'svg'},
     chartCaption: {type: String, default: 'LineChart'}
   },
