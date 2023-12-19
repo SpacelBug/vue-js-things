@@ -22,7 +22,8 @@ export default {
     width: {type: Number, default: 400},
     height: {type: Number, default: 400},
     type: {type: String, default: 'svg'},
-    chartCaption: {type: String, default: 'LineChart'}
+    chartCaption: {type: String, default: 'LineChart'},
+    chartStrokeColor: {type: String, default: '#5185b9'}
   },
   data() { return {
     }
@@ -62,7 +63,7 @@ export default {
           .yScale(this.yScale)
           .decorate((selection) => {
               selection.enter()
-                  .style('stroke', '#5185b9');
+                  .style('stroke', this.chartStrokeColor);
           })
 
       d3.select(this.$refs.group)
@@ -83,7 +84,7 @@ export default {
           .yScale(this.yScale)
           .context(ctx)
           .decorate((context, datum, index) => {
-              context.strokeStyle = '#5185b9';
+              context.strokeStyle = this.chartStrokeColor;
           });
 
       line(this.chartData)
@@ -104,7 +105,7 @@ export default {
           .decorate((program, data) => {
               fc.webglStrokeColor()
                   .value((_, i) => {
-                const rgba = d3.color('#5185b9');
+                const rgba = d3.color(this.chartStrokeColor);
                 return [rgba.r / 255, rgba.g / 255, rgba.b / 255, rgba.opacity];
                 })
                 .data(data)(program);
