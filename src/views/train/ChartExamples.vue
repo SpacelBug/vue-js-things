@@ -1,7 +1,17 @@
 <template>
+  <div class="chart-selector">
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.LineChartSvg">LineChart SVG</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.LineChartCanvas">LineChart Canvas</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.LineChartWebGl">LineChart WebGL</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesSvg">TimeSeriesChart SVG</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesCanvas">TimeSeriesChart Canvas</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesWebGl">TimeSeriesChart WebGL</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesSvg">MultiTimeSeries SVG</div>
+  </div>
   <div class="main-box">
-    <div class="chart-example-container">
-      <div class="chart-example-container-chart">
+
+    <div class="chart-example-container" ref="LineChartSvg">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.LineChartSvg">
         <line-chart
             :chart-data="chartData"
             :type="'svg'"
@@ -11,8 +21,8 @@
       <div class="chart-example-container-code"></div>
     </div>
 
-    <div class="chart-example-container">
-      <div class="chart-example-container-chart">
+    <div class="chart-example-container" ref="LineChartCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.LineChartCanvas">
         <line-chart
             :chart-data="chartData"
             :type="'canvas'"
@@ -22,45 +32,57 @@
       <div class="chart-example-container-code"></div>
     </div>
 
-    <div class="chart-example-container">
-      <div class="chart-example-container-chart">
+    <div class="chart-example-container" ref="LineChartWebGl">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.LineChartWebGl">
         <line-chart
             :chart-data="chartData"
-            :type="'svg'"
+            :type="'webgl'"
             :chart-caption="'LineChart (webgl)'"
             :show-plotting-time="true"/>
       </div>
       <div class="chart-example-container-code"></div>
     </div>
 
-    <div class="chart-example-container">
-      <div class="chart-example-container-chart">
+    <div class="chart-example-container" ref="TimeSeriesSvg">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.TimeSeriesSvg">
         <time-series-chart
             :chart-data="timeChartData"
-            :type="'canvas'"
+            :type="'svg'"
             :chart-caption="'TimeSeriesChart (svg)'"
             :show-plotting-time="true"/>
       </div>
       <div class="chart-example-container-code"></div>
     </div>
 
-    <div class="chart-example-container">
-      <div class="chart-example-container-chart">
+    <div class="chart-example-container" ref="TimeSeriesCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.TimeSeriesCanvas">
         <time-series-chart
             :chart-data="timeChartData"
-            :type="'webgl'"
+            :type="'canvas'"
             :chart-caption="'TimeSeriesChart (canvas)'"
             :show-plotting-time="true"/>
       </div>
       <div class="chart-example-container-code"></div>
     </div>
 
-    <div class="chart-example-container">
-      <div class="chart-example-container-chart">
+    <div class="chart-example-container" ref="TimeSeriesWebGl">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.TimeSeriesWebGl">
         <time-series-chart
             :chart-data="timeChartData"
             :type="'webgl'"
             :chart-caption="'TimeSeriesChart (webgl)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="MultiTimeSeriesSvg">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesSvg">
+        <multi-time-series
+            :chart-data="multiTimeChartData"
+            :width = "1600"
+            :type="'svg'"
+            :chart-caption="'MultiTimeSeriesChart (svg)'"
             :show-plotting-time="true"/>
       </div>
       <div class="chart-example-container-code"></div>
@@ -71,37 +93,53 @@
 <script>
 import LineChart from "@/components/d3fc-charts/LineChart";
 import TimeSeriesChart from "@/components/d3fc-charts/TimeSeriesChart";
+import MultiTimeSeries from "@/components/d3fc-charts/MultiTimeSeries";
 
 export default {
   name: "ChartExamples",
   components: {
     LineChart,
-    TimeSeriesChart
+    TimeSeriesChart,
+    MultiTimeSeries,
   },
   data () { return {
-      chartData: [
-          {x: 0, y: 1},
-          {x: 1, y: 5},
-          {x: 2, y: 6},
-          {x: 3, y: 1},
-          {x: 4, y: 5},
-          {x: 5, y: 2},
-          {x: 6, y: 1},
-          {x: 7, y: 5},
-          {x: 8, y: 6},
-          {x: 9, y: 1},
-          {x: 10, y: 5},
-          {x: 11, y: 2},
-      ],
-      timeChartData: [1,2,5,4,6,7,3,5,6,7,9,6,4,32,3,7,3,2,3,3,14,12,34,12,1,23,23,4,23,14]
+      selectedChart: null,
+      chartData: Array.from({length: 1000000}, (_, i) => ({x: i, y: Math.random()})),
+      timeChartData: Array.from({length: 1000000}, (_, i) => (Math.random())),
+      multiTimeChartData: [
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000}, (_, i) => (Math.random())),
+      ]
     }
+  },
+  mounted() {
   }
 }
 </script>
 
 <style scoped>
+.chart-selector{
+  display: flex;
+  gap: 20px;
+  font-size: 16px;
+  padding: 24px;
+}
+.chart-selector-button{
+  cursor: pointer;
+}
 .main-box{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
