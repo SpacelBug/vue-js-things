@@ -1,6 +1,6 @@
 <template>
   <div ref="target">
-    <h4>{{chartCaption}}<template v-if="plottingTime && showPlottingTime"> ({{ plottingTime }}ms)</template></h4>
+    <h4>{{chartCaption}}<template v-if="plottingTime && showPlottingTime"> ({{ plottingTime }}ms for {{chartData.length}} points)</template></h4>
     <svg v-if="type === 'svg'" :width="width" :height="height">
       <g ref="group"></g>
     </svg>
@@ -26,6 +26,8 @@ export default {
     chartStrokeColor: {type: String, default: '#5185b9'},
 
     showPlottingTime: {type: Boolean, default: false},
+    showAxis: {type: Boolean, default: true},
+    showGrid: {type: Boolean, default: true}
   },
   data() { return {
       plottingTime: null,
@@ -41,6 +43,14 @@ export default {
       return d3.scaleLinear()
           .domain(d3.extent(this.chartData.map((d)=>{return d[this.yName]})))
           .range([this.height, 0])
+    },
+    xAxis() {
+      return fc.axisBottom(this.xScale)
+          .tickCenterLabel(true)
+    },
+    yAxis() {
+      return fc.axisLeft(this.yScale)
+          .tickCenterLabel(true)
     }
   },
   mounted() {
