@@ -7,6 +7,8 @@
     <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesCanvas">TimeSeriesChart Canvas</div>
     <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesWebGl">TimeSeriesChart WebGL</div>
     <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesSvg">MultiTimeSeries SVG</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesCanvas">MultiTimeSeries Canvas</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesWebGl">MultiTimeSeries WebGl</div>
   </div>
   <div class="main-box">
 
@@ -78,11 +80,41 @@
 
     <div class="chart-example-container" ref="MultiTimeSeriesSvg">
       <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesSvg">
-        <multi-time-series
+        <sliced-time-series
             :chart-data="multiTimeChartData"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
             :width = "1600"
             :type="'svg'"
             :chart-caption="'MultiTimeSeriesChart (svg)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="MultiTimeSeriesCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesCanvas">
+        <sliced-time-series
+            :chart-data="multiTimeChartData"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :type="'canvas'"
+            :chart-caption="'MultiTimeSeriesChart (Canvas)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="MultiTimeSeriesWebGl">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesWebGl">
+        <sliced-time-series
+            :chart-data="multiTimeChartData"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :type="'webgl'"
+            :chart-caption="'MultiTimeSeriesChart (webgl)'"
             :show-plotting-time="true"/>
       </div>
       <div class="chart-example-container-code"></div>
@@ -93,32 +125,32 @@
 <script>
 import LineChart from "@/components/d3fc-charts/LineChart";
 import TimeSeriesChart from "@/components/d3fc-charts/TimeSeriesChart";
-import MultiTimeSeries from "@/components/d3fc-charts/MultiTimeSeries";
+import SlicedTimeSeries from "@/components/d3fc-charts/SlicedTimeSeries";
 
 export default {
   name: "ChartExamples",
   components: {
     LineChart,
     TimeSeriesChart,
-    MultiTimeSeries,
+    SlicedTimeSeries,
   },
   data () { return {
       selectedChart: null,
       chartData: Array.from({length: 1000000}, (_, i) => ({x: i, y: Math.random()})),
       timeChartData: Array.from({length: 1000000}, (_, i) => (Math.random())),
       multiTimeChartData: [
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
-        Array.from({length: 24000}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
       ]
     }
   },
