@@ -9,6 +9,7 @@
     <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesSvg">MultiTimeSeries SVG</div>
     <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesCanvas">MultiTimeSeries Canvas</div>
     <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesWebGl">MultiTimeSeries WebGl</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.HelicorderVueCanvas">Helicorder Canvas</div>
   </div>
   <div class="main-box">
 
@@ -119,6 +120,20 @@
       </div>
       <div class="chart-example-container-code"></div>
     </div>
+
+    <div class="chart-example-container" ref="HelicorderVueCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.HelicorderVueCanvas">
+        <helicorder-vue
+            :chart-data="helicorderData"
+            :minutes-in-a-row="5"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :type="'canvas'"
+            :chart-caption="'HelicorderVue (canvas)'"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
   </div>
 </template>
 
@@ -126,6 +141,7 @@
 import LineChart from "@/components/d3fc-charts/LineChart";
 import TimeSeriesChart from "@/components/d3fc-charts/TimeSeriesChart";
 import SlicedTimeSeries from "@/components/d3fc-charts/SlicedTimeSeries";
+import HelicorderVue from "@/components/d3fc-charts/HelicorderVue";
 
 export default {
   name: "ChartExamples",
@@ -133,6 +149,7 @@ export default {
     LineChart,
     TimeSeriesChart,
     SlicedTimeSeries,
+    HelicorderVue
   },
   data () { return {
       selectedChart: null,
@@ -151,7 +168,8 @@ export default {
         Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
         Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
         Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
-      ]
+      ],
+      helicorderData: Array.from({length: 24000 * 5 * 12}, (_, i) => (Math.random())),
     }
   },
   mounted() {
