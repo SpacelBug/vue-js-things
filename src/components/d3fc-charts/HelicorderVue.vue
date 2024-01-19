@@ -98,7 +98,7 @@ export default {
     async drawCanvasLine(data, index) {
       let xScale = d3.scaleLinear()
             .domain([0, data.length])
-            .range([0, this.width])
+            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
       let yScale = d3.scaleLinear()
             .domain(d3.extent(data))
             .range([this.lineHeight, 0])
