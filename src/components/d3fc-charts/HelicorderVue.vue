@@ -1,9 +1,12 @@
 <template>
   <h4>{{chartCaption}}</h4>
-  <div ref="target" class="main-container">
+  <div ref="target"
+       class="main-container"
+       @mouseenter="$refs.cursor.style.visibility = 'visible'"
+       @mouseleave="$refs.cursor.style.visibility = 'hidden'">
     <svg v-if="type === 'svg'" :width="width" :height="height" ref="svg" class="svg-container"/>
     <div v-else :width="width" :height="height" ref="canvas-box" class="canvas-container"/>
-    <div class="cursor" ref="cursor"></div>
+    <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
   </div>
   <div>Current time: {{cursorDateTime}}</div>
 </template>
@@ -32,10 +35,19 @@ export default {
       secondInCursor: null,
 
       activeLine: null,
-      cursorPosX: null,
-      cursorPosY: null,
+      currentLineIndex: null,
 
-      currentLineIndex: null
+      cursorPosX: null,
+      cursorPosY: 0,
+
+      cursorStartPosX: null,
+      cursorStartPosY: null,
+      cursorEndPosX: null,
+      cursorStartLineIndex: null,
+      cursorIsStretching: false,
+      cursorWidth: null,
+
+      loadedObservation: null,
     }
   },
   computed: {
@@ -67,12 +79,59 @@ export default {
     },
     lineHeight() {
       return Math.floor(this.height / this.slicedData.length)
+    },
+    cursorForm() {
+      /***
+       * Задает параметры для формы курсора с помощью метода observationClipPath()
+       */
+      return this.observationClipPath(this.cursorStartPosX, this.cursorPosX)
     }
   },
   mounted() {
     this.plot()
+    this.loadedObservation = this.loadObservation()
   },
   methods: {
+    observationClipPath(startPos, endPos) {
+      /***
+       * Возвращает строку определяющую форму маркера наблюдения для css свойства clip-path
+       */
+      let clipPath = [
+          `0px ${this.lineHeight}px`,
+          `${startPos}px ${this.lineHeight}px`,
+          `${startPos}px 0px`,
+
+          `100% 0px`,
+
+          `100% calc(100% - ${this.lineHeight}px)`,
+          `${endPos}px calc(100% - ${this.lineHeight}px)`,
+          `${endPos}px 100%`,
+
+          `0px 100%`
+      ]
+
+      return clipPath.join(',')
+    },
+    loadObservation() {
+      let startDateTime = new Date(this.startDateTime)
+      let endDateTime = new Date(this.startDateTime)
+      startDateTime.setSeconds(startDateTime.getSeconds() + 3000)
+      endDateTime.setSeconds(startDateTime.getSeconds() + 5000)
+
+      let listOfObservations = [
+          {startDateTime: startDateTime, endDateTime: endDateTime}
+      ]
+
+      let filteredObservationsList = []
+
+      for (let observation of listOfObservations) {
+        if ((observation.startDateTime.getTime() > this.startDateTime) && (observation.endDateTime.getTime() > this.startDateTime)) {
+          filteredObservationsList.push(observation)
+        }
+      }
+
+      return filteredObservationsList
+    },
     async plot() {
 
       let index = 0
@@ -110,6 +169,22 @@ export default {
             this.secondInCursor = xScale.invert(d3.pointer(event)[0]) * 1 / this.samplingRate * (index + 1)
             this.cursorPosX = d3.pointer(event)[0]
             this.cursorPosY = this.lineHeight * (index)
+            if (this.cursorStartLineIndex && this.cursorIsStretching) {
+              let cursorHeight = this.cursorStartLineIndex !== index + 1 ? this.lineHeight * ((index + 2) - this.cursorStartLineIndex) : this.lineHeight
+              this.$refs.cursor.style.height = `${(Math.abs(cursorHeight))}px`
+            }
+          }))
+          .on('mousedown', (()=>{
+            this.cursorStartLineIndex = index + 1
+            this.cursorStartPosY = this.lineHeight * (index)
+            this.cursorIsStretching = true
+            this.cursorStartPosX = d3.pointer(event)[0]
+          }))
+          .on('mouseup', (()=>{
+            this.cursorIsStretching = false
+            this.cursorWidth = null
+            this.cursorEndPosX = d3.pointer(event)[0]
+            this.$refs.cursor.style.height = `${this.lineHeight}px`
           }))
           .node()
 
@@ -135,6 +210,7 @@ export default {
 <style scoped>
 .main-container{
   position: relative;
+  height: v-bind(height + 'px');
 }
 .svg-container{
   display: flex;
@@ -146,10 +222,18 @@ export default {
 }
 .cursor{
   position: absolute;
+  visibility: hidden;
+  pointer-events: none;
   top: v-bind(cursorPosY + 'px');
   left: v-bind(cursorPosX + 'px');
   height: v-bind(lineHeight + 'px');
   width: 2px;
-  background-color: red;
+  background-color: rgba(91, 68, 68, 0.62);
+}
+.stretching-cursor{
+  width: 100%;
+  top: v-bind(cursorStartPosY + 'px');
+  left: 0;
+  clip-path: polygon(v-bind(cursorForm));
 }
 </style>
