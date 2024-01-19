@@ -167,10 +167,15 @@ export default {
           .attr('height', this.lineHeight)
           .on('mousemove', (()=>{
             this.secondInCursor = xScale.invert(d3.pointer(event)[0]) * 1 / this.samplingRate * (index + 1)
+
             this.cursorPosX = d3.pointer(event)[0]
             this.cursorPosY = this.lineHeight * (index)
-            if (this.cursorStartLineIndex && this.cursorIsStretching) {
-              let cursorHeight = this.cursorStartLineIndex !== index + 1 ? this.lineHeight * ((index + 2) - this.cursorStartLineIndex) : this.lineHeight
+
+            if ((this.cursorStartLineIndex <= (index + 1)) && this.cursorIsStretching) {
+
+              let cursorHeight = this.cursorStartLineIndex !== index + 1 ?
+                  this.lineHeight * ((index + 2) - this.cursorStartLineIndex) : this.lineHeight
+
               this.$refs.cursor.style.height = `${(Math.abs(cursorHeight))}px`
             }
           }))
