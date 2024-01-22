@@ -125,12 +125,13 @@
       <div class="chart-example-container-chart" v-if="selectedChart === $refs.HelicorderVueCanvas">
         <helicorder-vue
             :chart-data="helicorderData"
+            :loaded-observation="helicorderLoadedObservation"
             :minutes-in-a-row="5"
             :sampling-rate="200"
             :start-date-time="new Date()"
             :width = "1600"
             :type="'canvas'"
-            :chart-caption="'HelicorderVue (canvas)'"/>
+            :chart-caption="'HelicorderVue (canvas)'" @selectObservation="createObservation"/>
       </div>
       <div class="chart-example-container-code"></div>
     </div>
@@ -169,10 +170,17 @@ export default {
         Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
         Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
       ],
+
       helicorderData: Array.from({length: 24000 * 5 * 12}, (_, i) => (Math.random())),
+      helicorderLoadedObservation: [],
     }
   },
   mounted() {
+  },
+  methods: {
+    createObservation(data) {
+      this.helicorderLoadedObservation.push(data)
+    }
   }
 }
 </script>

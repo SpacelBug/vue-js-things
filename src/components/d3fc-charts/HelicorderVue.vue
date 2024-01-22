@@ -8,7 +8,7 @@
     <div v-else :width="width" :height="height" ref="canvas-box" class="canvas-container"/>
     <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
     <div class="observation"
-         v-for="observation in loadedObservation"
+         v-for="observation in processLoadedObservation"
          :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
          :style="`height: ${observation.params.height}px;
          clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
@@ -25,6 +25,7 @@ export default {
   name: "HelicorderVue",
   props: {
     chartData: Array,
+    loadedObservation: {type: Array, default: []},
     samplingRate: Number,
     minutesInARow: Number,
     startDateTime: new Date(),
@@ -55,8 +56,6 @@ export default {
       cursorStartLineIndex: null,
       cursorIsStretching: false,
       cursorWidth: null,
-
-      loadedObservation: null,
     }
   },
   computed: {
@@ -125,11 +124,43 @@ export default {
        * Задает параметры для формы курсора с помощью метода observationClipPath()
        */
       return this.observationClipPath(this.cursorStartPosX, this.cursorPosX)
-    }
+    },
+    processLoadedObservation() {
+      /***
+       * Обрабатывает список наблюдений и задает параметры для их отображения
+       * (пока тестовый)
+       */
+
+      let listOfObservations = this.loadedObservation.map((data)=>{return {data, params: {}}})
+
+      let filteredObservationsList = []
+
+      for (let observation of listOfObservations) {
+        if ((observation.data.startDateTime.getTime() > this.startDateTime) && (observation.data.endDateTime.getTime() > this.startDateTime)) {
+          observation.params.startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          observation.params.endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+
+          let startLine = Math.floor(observation.params.startIndexGlobal / this.sliceRange)
+          let endLine = Math.ceil(observation.params.endIndexGlobal / this.sliceRange)
+
+          observation.params.startIndexLine = observation.params.startIndexGlobal % this.sliceRange
+          observation.params.endIndexLine =  observation.params.endIndexGlobal % this.sliceRange
+
+          observation.params.height = (endLine - startLine) * this.lineHeight
+          observation.params.top = startLine * this.lineHeight
+          observation.params.leftStart = this.scales[startLine].xScale(observation.params.startIndexLine)
+          observation.params.leftEnd = this.scales[endLine].xScale(observation.params.endIndexLine)
+
+          filteredObservationsList.push(observation)
+        }
+      }
+
+      console.log(filteredObservationsList)
+      return filteredObservationsList
+    },
   },
   async mounted() {
     await this.plot()
-    this.loadedObservation = await this.loadObservation()
   },
   methods: {
     getDateTimeBySeconds(seconds) {
@@ -161,43 +192,6 @@ export default {
       ]
 
       return clipPath.join(',')
-    },
-    async loadObservation() {
-      /***
-       * Обрабатывает список наблюдений и задает параметры для их отображения
-       * (пока тестовый)
-       */
-      let startDateTime = new Date(this.startDateTime)
-      let endDateTime = new Date(this.startDateTime)
-
-      let listOfObservations = [
-          {data: {startDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 3200)), endDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 4000))}, params: {}},
-          {data: {startDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 2950)), endDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 3100))}, params: {}},
-      ]
-
-      let filteredObservationsList = []
-
-      for (let observation of listOfObservations) {
-        if ((observation.data.startDateTime.getTime() > this.startDateTime) && (observation.data.endDateTime.getTime() > this.startDateTime)) {
-          observation.params.startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
-          observation.params.endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
-
-          let startLine = Math.floor(observation.params.startIndexGlobal / this.sliceRange)
-          let endLine = Math.ceil(observation.params.endIndexGlobal / this.sliceRange)
-
-          observation.params.startIndexLine = observation.params.startIndexGlobal % this.sliceRange
-          observation.params.endIndexLine =  observation.params.endIndexGlobal % this.sliceRange
-
-          observation.params.height = (endLine - startLine) * this.lineHeight
-          observation.params.top = startLine * this.lineHeight
-          observation.params.leftStart = this.scales[startLine].xScale(observation.params.startIndexLine)
-          observation.params.leftEnd = this.scales[endLine].xScale(observation.params.endIndexLine)
-
-          filteredObservationsList.push(observation)
-        }
-      }
-
-      return filteredObservationsList
     },
     async plot() {
 
