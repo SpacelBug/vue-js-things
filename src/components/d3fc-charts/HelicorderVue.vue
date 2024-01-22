@@ -166,7 +166,7 @@ export default {
           .attr('width', this.width)
           .attr('height', this.lineHeight)
           .on('mousemove', (()=>{
-            this.secondInCursor = (xScale.invert(d3.pointer(event)[0]) + ((index + 1) * this.sliceRange)) * (1 / this.samplingRate)
+            this.secondInCursor = (Math.round(xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
 
             this.cursorPosX = d3.pointer(event)[0]
             this.cursorPosY = this.lineHeight * (index)
