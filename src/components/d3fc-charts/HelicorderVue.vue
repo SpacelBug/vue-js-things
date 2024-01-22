@@ -7,6 +7,12 @@
     <svg v-if="type === 'svg'" :width="width" :height="height" ref="svg" class="svg-container"/>
     <div v-else :width="width" :height="height" ref="canvas-box" class="canvas-container"/>
     <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
+    <div class="observation"
+         v-for="observation in loadedObservation"
+         :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
+         :style="`height: ${observation.params.height}px;
+         clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
+         top: ${observation.params.top}px;`"/>
   </div>
   <div>Current time: {{cursorDateTime}}</div>
 </template>
@@ -32,13 +38,15 @@ export default {
     chartStrokeColor: {type: String, default: '#5185b9'},
   },
   data() { return {
-      secondInCursor: null,
+      linesInfo: {},
 
       activeLine: null,
       currentLineIndex: null,
 
       cursorPosX: null,
       cursorPosY: 0,
+
+      secondInCursor: null,
 
       cursorStartPosX: null,
       cursorStartPosY: null,
@@ -58,24 +66,40 @@ export default {
 
       return date
     },
+    sliceRange() {
+      return this.minutesInARow * 60 * this.samplingRate
+    },
     slicedData() {
       let data = []
 
       let startIndex = 0
       let endIndex = 0
 
-      let sliceRange = this.minutesInARow * 60 * this.samplingRate
-
-      for (let index of [...Array(Math.floor(this.chartData.length / sliceRange)).keys()]) {
-        endIndex += sliceRange
+      for (let index of [...Array(Math.floor(this.chartData.length / this.sliceRange)).keys()]) {
+        endIndex += this.sliceRange
         data.push(this.chartData.slice(startIndex, endIndex))
         startIndex = endIndex
       }
-      if ((this.chartData.length % sliceRange) !== 0) {
+      if ((this.chartData.length % this.sliceRange) !== 0) {
         data.push(this.chartData.slice(startIndex, this.chartData.length))
       }
 
       return data
+    },
+    scales() {
+      let scales = []
+
+      for (let data of this.slicedData) {
+        let xScale = d3.scaleLinear()
+            .domain([0, data.length])
+            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
+        let yScale = d3.scaleLinear()
+            .domain(d3.extent(data))
+            .range([this.lineHeight, 0])
+        scales.push({xScale: xScale, yScale: yScale})
+      }
+
+      return scales
     },
     lineHeight() {
       return Math.floor(this.height / this.slicedData.length)
@@ -87,9 +111,9 @@ export default {
       return this.observationClipPath(this.cursorStartPosX, this.cursorPosX)
     }
   },
-  mounted() {
-    this.plot()
-    this.loadedObservation = this.loadObservation()
+  async mounted() {
+    await this.plot()
+    this.loadedObservation = await this.loadObservation()
   },
   methods: {
     observationClipPath(startPos, endPos) {
@@ -112,20 +136,33 @@ export default {
 
       return clipPath.join(',')
     },
-    loadObservation() {
+    async loadObservation() {
       let startDateTime = new Date(this.startDateTime)
       let endDateTime = new Date(this.startDateTime)
-      startDateTime.setSeconds(startDateTime.getSeconds() + 3000)
-      endDateTime.setSeconds(startDateTime.getSeconds() + 5000)
 
       let listOfObservations = [
-          {startDateTime: startDateTime, endDateTime: endDateTime}
+          {data: {startDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 3200)), endDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 4000))}, params: {}},
+          {data: {startDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 2950)), endDateTime: new Date(new Date().setSeconds(startDateTime.getSeconds() + 3100))}, params: {}},
       ]
 
       let filteredObservationsList = []
 
       for (let observation of listOfObservations) {
-        if ((observation.startDateTime.getTime() > this.startDateTime) && (observation.endDateTime.getTime() > this.startDateTime)) {
+        if ((observation.data.startDateTime.getTime() > this.startDateTime) && (observation.data.endDateTime.getTime() > this.startDateTime)) {
+          observation.params.startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          observation.params.endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+
+          let startLine = Math.floor(observation.params.startIndexGlobal / this.sliceRange)
+          let endLine = Math.ceil(observation.params.endIndexGlobal / this.sliceRange)
+
+          observation.params.startIndexLine = observation.params.startIndexGlobal % this.sliceRange
+          observation.params.endIndexLine =  observation.params.endIndexGlobal % this.sliceRange
+
+          observation.params.height = (endLine - startLine) * this.lineHeight
+          observation.params.top = startLine * this.lineHeight
+          observation.params.leftStart = this.scales[startLine].xScale(observation.params.startIndexLine)
+          observation.params.leftEnd = this.scales[endLine].xScale(observation.params.endIndexLine)
+
           filteredObservationsList.push(observation)
         }
       }
@@ -155,18 +192,12 @@ export default {
 
     },
     async drawCanvasLine(data, index) {
-      let xScale = d3.scaleLinear()
-            .domain([0, data.length])
-            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
-      let yScale = d3.scaleLinear()
-            .domain(d3.extent(data))
-            .range([this.lineHeight, 0])
 
       let canvas = d3.select(this.$refs["canvas-box"]).append('canvas')
           .attr('width', this.width)
           .attr('height', this.lineHeight)
           .on('mousemove', (()=>{
-            this.secondInCursor = (Math.round(xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
+            this.secondInCursor = (Math.round(this.scales[index].xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
 
             this.cursorPosX = d3.pointer(event)[0]
             this.cursorPosY = this.lineHeight * (index)
@@ -190,6 +221,7 @@ export default {
             this.cursorWidth = null
             this.cursorEndPosX = d3.pointer(event)[0]
             this.$refs.cursor.style.height = `${this.lineHeight}px`
+
           }))
           .node()
 
@@ -198,8 +230,8 @@ export default {
       let line = fc.seriesCanvasLine()
           .mainValue(d => d)
           .crossValue((_, i) => i)
-          .xScale(xScale)
-          .yScale(yScale)
+          .xScale(this.scales[index].xScale)
+          .yScale(this.scales[index].yScale)
           .context(ctx)
           .decorate((context, datum, index) => {
               context.strokeStyle = this.chartStrokeColor;
@@ -240,5 +272,13 @@ export default {
   top: v-bind(cursorStartPosY + 'px');
   left: 0;
   clip-path: polygon(v-bind(cursorForm));
+}
+.observation{
+  position: absolute;
+  width: 100%;
+  background-color: rgba(30, 255, 109, 0.21);
+}
+.observation:hover{
+  background-color: rgba(30, 255, 109, 0.5);
 }
 </style>
