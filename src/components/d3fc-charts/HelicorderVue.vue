@@ -37,6 +37,7 @@ export default {
     chartCaption: {type: String, default: 'TimeSeriesChart'},
     chartStrokeColor: {type: String, default: '#5185b9'},
   },
+  emits: ['selectObservation'],
   data() { return {
       linesInfo: {},
 
@@ -116,6 +117,13 @@ export default {
     this.loadedObservation = await this.loadObservation()
   },
   methods: {
+    getDateTimeBySeconds(seconds) {
+      let date = new Date(this.startDateTime)
+
+      date.setSeconds(date.getSeconds() + seconds)
+
+      return new Date(date)
+    },
     observationClipPath(startPos, endPos) {
       /***
        * Возвращает строку определяющую форму маркера наблюдения для css свойства clip-path
@@ -188,8 +196,6 @@ export default {
       })
 
       await Promise.all(promises)
-
-
     },
     async drawCanvasLine(data, index) {
 
@@ -202,16 +208,16 @@ export default {
             this.cursorPosX = d3.pointer(event)[0]
             this.cursorPosY = this.lineHeight * (index)
 
-            if ((this.cursorStartLineIndex <= (index + 1)) && this.cursorIsStretching) {
+            if ((this.cursorStartLineIndex <= (index)) && this.cursorIsStretching) {
 
               let cursorHeight = this.cursorStartLineIndex !== index + 1 ?
-                  this.lineHeight * ((index + 2) - this.cursorStartLineIndex) : this.lineHeight
+                  this.lineHeight * ((index + 1) - this.cursorStartLineIndex) : this.lineHeight
 
               this.$refs.cursor.style.height = `${(Math.abs(cursorHeight))}px`
             }
           }))
           .on('mousedown', (()=>{
-            this.cursorStartLineIndex = index + 1
+            this.cursorStartLineIndex = index
             this.cursorStartPosY = this.lineHeight * (index)
             this.cursorIsStretching = true
             this.cursorStartPosX = d3.pointer(event)[0]
@@ -222,6 +228,10 @@ export default {
             this.cursorEndPosX = d3.pointer(event)[0]
             this.$refs.cursor.style.height = `${this.lineHeight}px`
 
+            let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
+            let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
+
+            this.$emit('selectObservation', {startDateTime: this.getDateTimeBySeconds(startSeconds), endDateTime: this.getDateTimeBySeconds(endSeconds)})
           }))
           .node()
 
