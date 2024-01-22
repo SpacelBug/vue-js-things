@@ -61,6 +61,9 @@ export default {
   },
   computed: {
     cursorDateTime() {
+      /***
+       * Время в текущей позиции курсора
+       */
       let date = new Date(this.startDateTime)
 
       date.setSeconds(date.getSeconds() + Math.round(this.secondInCursor))
@@ -68,9 +71,15 @@ export default {
       return date
     },
     sliceRange() {
+      /***
+       * Количество точек в одной полосе
+       */
       return this.minutesInARow * 60 * this.samplingRate
     },
     slicedData() {
+      /***
+       * Нарезает массив данных на полосы
+       */
       let data = []
 
       let startIndex = 0
@@ -88,6 +97,9 @@ export default {
       return data
     },
     scales() {
+      /***
+       * Список со "scales" для всех полос
+       */
       let scales = []
 
       for (let data of this.slicedData) {
@@ -103,6 +115,9 @@ export default {
       return scales
     },
     lineHeight() {
+      /***
+       * Вычисляет высоту полосы в пикселях
+       */
       return Math.floor(this.height / this.slicedData.length)
     },
     cursorForm() {
@@ -118,6 +133,9 @@ export default {
   },
   methods: {
     getDateTimeBySeconds(seconds) {
+      /***
+       * Возвращает время являющееся суммой времени начала и переданных в функцию секунд
+       */
       let date = new Date(this.startDateTime)
 
       date.setSeconds(date.getSeconds() + seconds)
@@ -145,6 +163,10 @@ export default {
       return clipPath.join(',')
     },
     async loadObservation() {
+      /***
+       * Обрабатывает список наблюдений и задает параметры для их отображения
+       * (пока тестовый)
+       */
       let startDateTime = new Date(this.startDateTime)
       let endDateTime = new Date(this.startDateTime)
 
