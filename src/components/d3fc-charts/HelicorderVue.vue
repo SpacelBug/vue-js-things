@@ -21,7 +21,8 @@
            :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
            :style="`height: ${observation.params.height}px;
            clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
-           top: ${observation.params.top}px;`"
+           top: ${observation.params.top}px;
+           z-index: ${observation.params.zIndex};`"
            @click="$emit('observationClick', observation.data)"/>
     </div>
     <div class="graph-side-panel">
@@ -155,8 +156,12 @@ export default {
 
       let filteredObservationsList = []
 
+      let counter = this.loadedObservation.length
       for (let observation of listOfObservations) {
-        if ((observation.data.startDateTime.getTime() > this.startDateTime) && (observation.data.endDateTime.getTime() > this.startDateTime)) {
+        if (
+            (observation.data.startDateTime.getTime() > this.startDateTime) &&
+            (observation.data.endDateTime.getTime() > this.startDateTime)
+        ) {
           observation.params.startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
           observation.params.endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
 
@@ -170,8 +175,11 @@ export default {
           observation.params.top = startLine * this.lineHeight
           observation.params.leftStart = this.scales[startLine].xScale(observation.params.startIndexLine)
           observation.params.leftEnd = this.scales[endLine].xScale(observation.params.endIndexLine)
+          observation.params.zIndex = counter
 
           filteredObservationsList.push(observation)
+
+          counter--
         }
       }
 
