@@ -49,10 +49,13 @@ export default {
   name: "HelicorderVue",
   props: {
     helicorderData: Array,
-    loadedObservation: {type: Array, default: []},
     samplingRate: Number,
     minutesInARow: Number,
     startDateTime: new Date(),
+
+    loadedObservation: {type: Array, default: []},
+    startDateTimeKey: {type: String, default: 'startDateTime'},
+    endDateTimeKey: {type: String, default: 'endDateTime'},
 
     width: {type: Number, default: 400},
     height: {type: Number, default: 500},
@@ -280,7 +283,10 @@ export default {
               let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
               let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
 
-              this.$emit('selectObservation', {startDateTime: this.getDateTimeBySeconds(startSeconds), endDateTime: this.getDateTimeBySeconds(endSeconds)})
+              let data = {}
+              data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
+              data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
+              this.$emit('selectObservation', data)
             }))
             .node()
 
