@@ -24,6 +24,9 @@
            top: ${observation.params.top}px;
            z-index: ${observation.params.zIndex};`"
            @click="$emit('observationClick', observation.data)"/>
+      <div class="vertical-lines">
+        <div class="vertical-line" v-for="_  in [...Array(minutesInARow + 1).keys()]"></div>
+      </div>
     </div>
     <div class="graph-side-panel">
       <div class="time-labels">
@@ -337,6 +340,20 @@ export default {
 .canvas-container{
   display: flex;
   flex-direction: column;
+}
+.vertical-lines{
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.vertical-line{
+  height: 100%;
+  width: 2px;
+  background-color: red;
 }
 .cursor{
   position: absolute;
