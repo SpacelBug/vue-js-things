@@ -4,7 +4,7 @@
       <div class="graph-gain">
         X: <input type="number" v-model="gain" @change="plot()">
       </div>
-      <div class="graph-caption">{{chartCaption}}</div>
+      <div class="graph-caption">{{graphCaption}}</div>
     </div>
     <div ref="target"
          class="graph-container"
@@ -60,8 +60,8 @@ export default {
     width: {type: Number, default: 400},
     height: {type: Number, default: 500},
     type: {type: String, default: 'svg'},
-    chartCaption: {type: String, default: 'Helicorder'},
-    chartStrokeColor: {type: String, default: '#5185b9'},
+    graphCaption: {type: String, default: 'Helicorder'},
+    graphStrokeColor: {type: String, default: '#5185b9'},
   },
   emits: ['selectObservation', 'observationClick'],
   data() { return {
@@ -298,7 +298,7 @@ export default {
           .yScale(this.scales[index].yScale)
           .context(ctx)
           .decorate((context, datum, index) => {
-              context.strokeStyle = this.chartStrokeColor;
+              context.strokeStyle = this.graphStrokeColor;
           })
 
 
