@@ -82,6 +82,8 @@ export default {
       cursorIsStretching: false,
       cursorWidth: null,
 
+      observationPointerEvents: 'all',
+
       gain: 1,
     }
   },
@@ -273,6 +275,7 @@ export default {
               this.cursorStartPosY = this.lineHeight * (index)
               this.cursorIsStretching = true
               this.cursorStartPosX = d3.pointer(event)[0]
+              this.observationPointerEvents = 'none'
             }))
             .on('mouseup', (()=>{
               this.cursorIsStretching = false
@@ -287,6 +290,7 @@ export default {
               data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
               data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
               this.$emit('selectObservation', data)
+              this.observationPointerEvents = 'all'
             }))
             .node()
 
@@ -378,6 +382,7 @@ export default {
   clip-path: polygon(v-bind(cursorForm));
 }
 .observation{
+  pointer-events: v-bind(observationPointerEvents);
   position: absolute;
   width: 100%;
   background-color: rgba(30, 255, 109, 0.21);
