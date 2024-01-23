@@ -21,7 +21,8 @@
            :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
            :style="`height: ${observation.params.height}px;
            clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
-           top: ${observation.params.top}px;`"/>
+           top: ${observation.params.top}px;`"
+           @click="$emit('observationClick', observation.data)"/>
     </div>
     <div class="graph-side-panel">
       <div class="time-labels">
@@ -57,7 +58,7 @@ export default {
     chartCaption: {type: String, default: 'Helicorder'},
     chartStrokeColor: {type: String, default: '#5185b9'},
   },
-  emits: ['selectObservation'],
+  emits: ['selectObservation', 'observationClick'],
   data() { return {
       linesInfo: {},
 
@@ -302,6 +303,9 @@ export default {
                  "footer footer";
 }
 .graph-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   grid-area: header;
 }
 .graph-side-panel{
