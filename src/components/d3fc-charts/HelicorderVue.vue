@@ -49,8 +49,6 @@ export default {
     samplingRate: Number,
     minutesInARow: Number,
     startDateTime: new Date(),
-    xName: {type: String, default: 'x'},
-    yName: {type: String, default: 'y'},
 
     width: {type: Number, default: 400},
     height: {type: Number, default: 500},
