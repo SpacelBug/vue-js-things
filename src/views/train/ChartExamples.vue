@@ -124,7 +124,7 @@
     <div class="chart-example-container" ref="HelicorderVueCanvas">
       <div class="chart-example-container-chart" v-if="selectedChart === $refs.HelicorderVueCanvas">
         <helicorder-vue
-            :chart-data="helicorderData"
+            :helicorder-data="helicorderData"
             :loaded-observation="helicorderLoadedObservation"
             :minutes-in-a-row="5"
             :sampling-rate="200"

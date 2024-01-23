@@ -1,20 +1,39 @@
 <template>
-  <h4>{{chartCaption}}</h4>
-  <div ref="target"
-       class="main-container"
-       @mouseenter="$refs.cursor.style.visibility = 'visible'"
-       @mouseleave="$refs.cursor.style.visibility = 'hidden'">
-    <svg v-if="type === 'svg'" :width="width" :height="height" ref="svg" class="svg-container"/>
-    <div v-else :width="width" :height="height" ref="canvas-box" class="canvas-container"/>
-    <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
-    <div class="observation"
-         v-for="observation in processLoadedObservation"
-         :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
-         :style="`height: ${observation.params.height}px;
-         clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
-         top: ${observation.params.top}px;`"/>
+  <div class="main-container">
+    <div class="graph-header">
+      <div class="graph-gain">
+        X: <input type="number" v-model="gain" @change="plot()">
+      </div>
+      <div class="graph-caption">{{chartCaption}}</div>
+    </div>
+    <div ref="target"
+         class="graph-container"
+         @mouseenter="$refs.cursor.style.visibility = 'visible'"
+         @mouseleave="$refs.cursor.style.visibility = 'hidden'">
+      <svg v-if="type === 'svg'" :width="width" :height="height" ref="svg" class="svg-container"/>
+      <div v-else :width="width"
+           :height="height"
+           ref="canvas-box"
+           class="canvas-container"/>
+      <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
+      <div class="observation"
+           v-for="observation in processLoadedObservation"
+           :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
+           :style="`height: ${observation.params.height}px;
+           clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
+           top: ${observation.params.top}px;`"/>
+    </div>
+    <div class="graph-side-panel">
+      <div class="time-labels">
+        <div class="time-label" v-for="(_, index) in slicedData">
+          {{ new Date(new Date(startDateTime).setSeconds(startDateTime.getSeconds() + (minutesInARow * 60) * index)).toLocaleString().split(', ')[1] }}
+        </div>
+      </div>
+    </div>
+    <div class="graph-footer">
+      <div>Current time: {{cursorDateTime}}</div>
+    </div>
   </div>
-  <div>Current time: {{cursorDateTime}}</div>
 </template>
 
 <script>
@@ -24,7 +43,7 @@ import * as fc from 'd3fc'
 export default {
   name: "HelicorderVue",
   props: {
-    chartData: Array,
+    helicorderData: Array,
     loadedObservation: {type: Array, default: []},
     samplingRate: Number,
     minutesInARow: Number,
@@ -35,7 +54,7 @@ export default {
     width: {type: Number, default: 400},
     height: {type: Number, default: 500},
     type: {type: String, default: 'svg'},
-    chartCaption: {type: String, default: 'TimeSeriesChart'},
+    chartCaption: {type: String, default: 'Helicorder'},
     chartStrokeColor: {type: String, default: '#5185b9'},
   },
   emits: ['selectObservation'],
@@ -56,6 +75,8 @@ export default {
       cursorStartLineIndex: null,
       cursorIsStretching: false,
       cursorWidth: null,
+
+      gain: 1,
     }
   },
   computed: {
@@ -84,13 +105,13 @@ export default {
       let startIndex = 0
       let endIndex = 0
 
-      for (let index of [...Array(Math.floor(this.chartData.length / this.sliceRange)).keys()]) {
+      for (let index of [...Array(Math.floor(this.helicorderData.length / this.sliceRange)).keys()]) {
         endIndex += this.sliceRange
-        data.push(this.chartData.slice(startIndex, endIndex))
+        data.push(this.helicorderData.slice(startIndex, endIndex))
         startIndex = endIndex
       }
-      if ((this.chartData.length % this.sliceRange) !== 0) {
-        data.push(this.chartData.slice(startIndex, this.chartData.length))
+      if ((this.helicorderData.length % this.sliceRange) !== 0) {
+        data.push(this.helicorderData.slice(startIndex, this.helicorderData.length))
       }
 
       return data
@@ -106,7 +127,7 @@ export default {
             .domain([0, data.length])
             .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
         let yScale = d3.scaleLinear()
-            .domain(d3.extent(data))
+            .domain([d3.min(data) * this.gain, d3.max(data) * this.gain])
             .range([this.lineHeight, 0])
         scales.push({xScale: xScale, yScale: yScale})
       }
@@ -197,6 +218,8 @@ export default {
 
       let index = 0
 
+      d3.select(this.$refs["canvas-box"]).node().innerHTML = null
+
       let promises = [...Array(this.slicedData.length).keys()].map(async (index)=>{
 
         setTimeout(async ()=> {
@@ -216,40 +239,40 @@ export default {
     async drawCanvasLine(data, index) {
 
       let canvas = d3.select(this.$refs["canvas-box"]).append('canvas')
-          .attr('width', this.width)
-          .attr('height', this.lineHeight)
-          .on('mousemove', (()=>{
-            this.secondInCursor = (Math.round(this.scales[index].xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
+            .attr('width', this.width)
+            .attr('height', this.lineHeight)
+            .on('mousemove', (()=>{
+              this.secondInCursor = (Math.round(this.scales[index].xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
 
-            this.cursorPosX = d3.pointer(event)[0]
-            this.cursorPosY = this.lineHeight * (index)
+              this.cursorPosX = d3.pointer(event)[0]
+              this.cursorPosY = this.lineHeight * (index)
 
-            if ((this.cursorStartLineIndex <= (index)) && this.cursorIsStretching) {
+              if ((this.cursorStartLineIndex <= (index)) && this.cursorIsStretching) {
 
-              let cursorHeight = this.cursorStartLineIndex !== index + 1 ?
-                  this.lineHeight * ((index + 1) - this.cursorStartLineIndex) : this.lineHeight
+                let cursorHeight = this.cursorStartLineIndex !== index + 1 ?
+                    this.lineHeight * ((index + 1) - this.cursorStartLineIndex) : this.lineHeight
 
-              this.$refs.cursor.style.height = `${(Math.abs(cursorHeight))}px`
-            }
-          }))
-          .on('mousedown', (()=>{
-            this.cursorStartLineIndex = index
-            this.cursorStartPosY = this.lineHeight * (index)
-            this.cursorIsStretching = true
-            this.cursorStartPosX = d3.pointer(event)[0]
-          }))
-          .on('mouseup', (()=>{
-            this.cursorIsStretching = false
-            this.cursorWidth = null
-            this.cursorEndPosX = d3.pointer(event)[0]
-            this.$refs.cursor.style.height = `${this.lineHeight}px`
+                this.$refs.cursor.style.height = `${(Math.abs(cursorHeight))}px`
+              }
+            }))
+            .on('mousedown', (()=>{
+              this.cursorStartLineIndex = index
+              this.cursorStartPosY = this.lineHeight * (index)
+              this.cursorIsStretching = true
+              this.cursorStartPosX = d3.pointer(event)[0]
+            }))
+            .on('mouseup', (()=>{
+              this.cursorIsStretching = false
+              this.cursorWidth = null
+              this.cursorEndPosX = d3.pointer(event)[0]
+              this.$refs.cursor.style.height = `${this.lineHeight}px`
 
-            let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
-            let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
+              let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
+              let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
 
-            this.$emit('selectObservation', {startDateTime: this.getDateTimeBySeconds(startSeconds), endDateTime: this.getDateTimeBySeconds(endSeconds)})
-          }))
-          .node()
+              this.$emit('selectObservation', {startDateTime: this.getDateTimeBySeconds(startSeconds), endDateTime: this.getDateTimeBySeconds(endSeconds)})
+            }))
+            .node()
 
       let ctx = canvas.getContext('2d')
 
@@ -272,8 +295,30 @@ export default {
 
 <style scoped>
 .main-container{
+  display: grid;
+  grid-gap: 10px;
+  grid-template: "header header"
+                 "side-panel graph"
+                 "footer footer";
+}
+.graph-header{
+  grid-area: header;
+}
+.graph-side-panel{
+  grid-area: side-panel;
+}
+.time-labels{
+  height: 100%;
+}
+.time-label{
+  height: v-bind(lineHeight + 'px');
+}
+.graph-footer{
+  grid-area: footer;
+}
+.graph-container{
   position: relative;
-  height: v-bind(height + 'px');
+  grid-area: graph;
 }
 .svg-container{
   display: flex;
