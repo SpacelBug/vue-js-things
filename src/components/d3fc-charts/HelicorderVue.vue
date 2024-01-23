@@ -65,26 +65,22 @@ export default {
   },
   emits: ['selectObservation', 'observationClick'],
   data() { return {
-      linesInfo: {},
+      linesInfo: {}, // scales для каждой линии
 
-      activeLine: null,
-      currentLineIndex: null,
+      cursorPosX: null, // позиция курсора по x
+      cursorPosY: 0, // позиция курсора по y
 
-      cursorPosX: null,
-      cursorPosY: 0,
+      secondInCursor: null, // кол-во секунд в позиции курсора
 
-      secondInCursor: null,
+      cursorStartPosX: null, // начальная позиция курсора по x (для выделения)
+      cursorStartPosY: null, // начальная позиция курсора по y (для выделения)
+      cursorEndPosX: null, // конечная позиция курсора по x (для выделения)
+      cursorStartLineIndex: null, // начальная линия ()
+      cursorIsStretching: false, // происходит ли выделение
 
-      cursorStartPosX: null,
-      cursorStartPosY: null,
-      cursorEndPosX: null,
-      cursorStartLineIndex: null,
-      cursorIsStretching: false,
-      cursorWidth: null,
+      observationPointerEvents: 'all', // css свойство "pointer-events" для наблюдений
 
-      observationPointerEvents: 'all',
-
-      gain: 1,
+      gain: 1, // увеличение графика
     }
   },
   computed: {
@@ -279,7 +275,6 @@ export default {
             }))
             .on('mouseup', (()=>{
               this.cursorIsStretching = false
-              this.cursorWidth = null
               this.cursorEndPosX = d3.pointer(event)[0]
               this.$refs.cursor.style.height = `${this.lineHeight}px`
 
