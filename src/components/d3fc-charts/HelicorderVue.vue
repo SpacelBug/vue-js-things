@@ -6,28 +6,40 @@
       </div>
       <div class="graph-caption">{{graphCaption}}</div>
     </div>
+    <div v-if="observationColorByData" class="observations-filters">
+      <form ref="filtersForm">
+        <div v-for="(color, key) in observationColorByData.colors"
+             class="filter"
+             :style="`background-color: ${color}`">
+          <input type="checkbox" checked v-model="observationsStatus[key]">
+          {{key}}
+        </div>
+      </form>
+    </div>
     <div ref="target"
          class="graph-container"
          @mouseenter="$refs.cursor.style.visibility = 'visible'"
          @mouseleave="$refs.cursor.style.visibility = 'hidden'">
-      <div v-else :width="width"
+      <div :width="width"
            :height="height"
            ref="canvas-box"
            class="canvas-container"/>
       <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
-      <div class="observation"
-           v-for="observation in processLoadedObservation"
-           :style="`height: ${observation.params.height}px;
-           clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
-           top: ${observation.params.top}px;
-           z-index: ${observation.params.zIndex};
-           background-color: ${observation.params.color};`"
-           @click="$emit('observationClick', observation.data)"
-           @mouseenter="$emit('observationEnter', observation.data)"
-           @mouseleave="$emit('observationLeave', observation.data)"/>
-      <div class="vertical-lines">
-        <div class="vertical-line" v-for="_  in [...Array(minutesInARow + 1).keys()]"></div>
-      </div>
+      <template v-for="observation in processLoadedObservation">
+        <div class="observation"
+             v-if="observationsStatus[observation.data[observationColorByData.key]]"
+             :style="`height: ${observation.params.height}px;
+             clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
+             top: ${observation.params.top}px;
+             z-index: ${observation.params.zIndex};
+             background-color: ${observation.params.color};`"
+             @click="$emit('observationClick', observation.data)"
+             @mouseenter="$emit('observationEnter', observation.data)"
+             @mouseleave="$emit('observationLeave', observation.data)"/>
+        <div class="vertical-lines">
+          <div class="vertical-line" v-for="_  in [...Array(minutesInARow + 1).keys()]"></div>
+        </div>
+      </template>
     </div>
     <div class="graph-side-panel">
       <div class="time-labels">
@@ -85,6 +97,7 @@ export default {
       cursorIsStretching: false, // происходит ли выделение
 
       observationPointerEvents: 'all', // css свойство "pointer-events" для наблюдений
+      observationsStatus: {},
 
       gain: 1, // увеличение графика
     }
@@ -209,6 +222,9 @@ export default {
     },
   },
   async mounted() {
+    for (let key in this.observationColorByData.colors) {
+      this.observationsStatus[key] = true
+    }
     await this.plot()
   },
   methods: {
@@ -337,9 +353,17 @@ export default {
 .main-container{
   display: grid;
   grid-gap: 10px;
-  grid-template: "header header"
+  grid-template: "filters filters"
+                 "header header"
                  "side-panel graph"
                  "footer footer" / 80px auto;
+}
+.observations-filters{
+  grid-area: filters;
+}
+.filter{
+  width: fit-content;
+  padding: 5px 10px;
 }
 .graph-header{
   display: flex;
