@@ -89,6 +89,11 @@ export default {
       gain: 1, // увеличение графика
     }
   },
+  watch: {
+    async helicorderData() {
+      await this.plot()
+    }
+  },
   computed: {
     cursorDateTime() {
       /***
