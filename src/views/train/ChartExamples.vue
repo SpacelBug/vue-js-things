@@ -144,7 +144,7 @@
 import LineChart from "@/components/d3fc-charts/LineChart";
 import TimeSeriesChart from "@/components/d3fc-charts/TimeSeriesChart";
 import SlicedTimeSeries from "@/components/d3fc-charts/SlicedTimeSeries";
-import HelicorderVue from "@/components/d3fc-charts/HelicorderVue";
+import HelicorderVue from "@/components/d3fc-charts/helicorder/HelicorderVue";
 
 export default {
   name: "ChartExamples",
