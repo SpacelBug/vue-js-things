@@ -37,7 +37,7 @@
              @mouseenter="$emit('observationEnter', observation.data)"
              @mouseleave="$emit('observationLeave', observation.data)"/>
         <div class="vertical-lines">
-          <div class="vertical-line" v-for="_ in [...Array(Number(minutesInARow) + 1).keys()]">1</div>
+          <div class="vertical-line" v-for="_ in [...Array(Number(minutesInARow) + 1).keys()]"/>
         </div>
       </template>
     </div>
