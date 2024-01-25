@@ -7,12 +7,9 @@
       <div class="graph-caption">{{graphCaption}}</div>
     </div>
     <div v-if="observationColorByData" class="observations-filters">
-      <div v-for="(color, key) in observationColorByData.colors"
-           class="filter"
-           :style="`background-color: ${color}`">
-        <input type="checkbox" checked v-model="observationsStatus[key]">
-        {{key}}
-      </div>
+      <template v-for="(color, key) in observationColorByData.colors">
+        <helicorder-filter :background-color="color" :caption="key" v-model="observationsStatus[key]"/>
+      </template>
     </div>
     <div ref="target"
          class="graph-container"
@@ -58,8 +55,13 @@
 import * as d3 from 'd3'
 import * as fc from 'd3fc'
 
+import HelicorderFilter from "@/components/d3fc-charts/helicorder/HelicorderFilter";
+
 export default {
   name: "HelicorderVue",
+  components: {
+    HelicorderFilter,
+  },
   props: {
     helicorderData: Array,
     maxData: Number,
@@ -372,10 +374,6 @@ export default {
 }
 .observations-filters{
   grid-area: filters;
-}
-.filter{
-  width: fit-content;
-  padding: 5px 10px;
 }
 .graph-header{
   display: flex;
