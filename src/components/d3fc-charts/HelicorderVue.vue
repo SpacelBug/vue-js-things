@@ -93,6 +93,9 @@ export default {
   watch: {
     async helicorderData() {
       await this.plot()
+    },
+    async minutesInARow() {
+      await this.plot()
     }
   },
   computed: {
