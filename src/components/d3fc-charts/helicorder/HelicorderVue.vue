@@ -6,20 +6,24 @@
       </div>
       <div class="graph-caption">{{graphCaption}}</div>
     </div>
-    <div v-if="observationColorByData" class="observations-filters">
+
+    <div class="observations-filters" v-if="observationColorByData">
       <template v-for="(color, key) in observationColorByData.colors">
         <helicorder-filter :background-color="color" :caption="key" v-model="observationsStatus[key]"/>
       </template>
     </div>
-    <div ref="target"
-         class="graph-container"
+
+    <div class="graph-container"
+         ref="target"
          @mouseenter="$refs.cursor.style.visibility = 'visible'"
          @mouseleave="$refs.cursor.style.visibility = 'hidden'">
       <div :width="width"
            :height="height"
            ref="canvas-box"
            class="canvas-container"/>
+
       <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
+
       <template v-for="observation in processLoadedObservation">
         <div class="observation"
              v-if="observationsStatus[observation.data[observationColorByData.key]]"
@@ -31,11 +35,13 @@
              @click="$emit('observationClick', observation.data)"
              @mouseenter="$emit('observationEnter', observation.data)"
              @mouseleave="$emit('observationLeave', observation.data)"/>
-        <div class="vertical-lines">
-          <div class="vertical-line" v-for="_ in [...Array(Number(minutesInARow) + 1).keys()]"/>
-        </div>
       </template>
+
+      <div class="vertical-lines">
+        <div class="vertical-line" v-for="_ in [...Array(Number(minutesInARow) + 1).keys()]"/>
+      </div>
     </div>
+
     <div class="graph-side-panel">
       <div class="time-labels">
         <div class="time-label" v-for="(_, index) in slicedData">
@@ -45,6 +51,7 @@
         </div>
       </div>
     </div>
+
     <div class="graph-footer">
       <div>Current time: {{cursorDateTime}}</div>
     </div>
