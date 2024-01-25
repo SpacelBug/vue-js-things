@@ -10,7 +10,6 @@
          class="graph-container"
          @mouseenter="$refs.cursor.style.visibility = 'visible'"
          @mouseleave="$refs.cursor.style.visibility = 'hidden'">
-      <svg v-if="type === 'svg'" :width="width" :height="height" ref="svg" class="svg-container"/>
       <div v-else :width="width"
            :height="height"
            ref="canvas-box"
@@ -369,10 +368,6 @@ export default {
   overflow: hidden;
   position: relative;
   grid-area: graph;
-}
-.svg-container{
-  display: flex;
-  flex-direction: column;
 }
 .vertical-lines{
   pointer-events: none;
