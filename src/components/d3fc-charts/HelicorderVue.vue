@@ -51,6 +51,7 @@ export default {
   name: "HelicorderVue",
   props: {
     helicorderData: Array,
+    maxData: Number,
     samplingRate: Number,
     minutesInARow: Number,
     startDateTime: new Date(),
@@ -142,8 +143,8 @@ export default {
             .domain([0, data.length])
             .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
         let yScale = d3.scaleLinear()
-            .domain([d3.min(data) * this.gain, d3.max(data) * this.gain])
-            .range([0, this.lineHeight])
+            .domain([-this.maxData, this.maxData])
+            .range([0, this.lineHeight * this.gain])
         scales.push({xScale: xScale, yScale: yScale})
       }
 
