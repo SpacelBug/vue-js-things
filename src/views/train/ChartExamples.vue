@@ -126,6 +126,7 @@
         <helicorder-vue
             :helicorder-data="helicorderData"
             :loaded-observation="helicorderLoadedObservation"
+            :observation-color-by-data="{key: 'type', colors: {'I': '#58a95f'}}"
             :minutes-in-a-row="5"
             :sampling-rate="200"
             :start-date-time="new Date()"

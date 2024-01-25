@@ -21,7 +21,8 @@
            :style="`height: ${observation.params.height}px;
            clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
            top: ${observation.params.top}px;
-           z-index: ${observation.params.zIndex};`"
+           z-index: ${observation.params.zIndex};
+           background-color: ${observation.params.color};`"
            @click="$emit('observationClick', observation.data)"
            @mouseenter="$emit('observationEnter', observation.data)"
            @mouseleave="$emit('observationLeave', observation.data)"/>
@@ -55,6 +56,10 @@ export default {
     startDateTime: new Date(),
 
     loadedObservation: {type: Array, default: []},
+    observationDefaultColor: {type: String, default: 'rgba(91,91,91)'},
+    observationColorByData: {key: String, colors: {}},
+    observationOpacity: {type: String, default: '0.7'},
+
     startDateTimeKey: {type: String, default: 'startDateTime'},
     endDateTimeKey: {type: String, default: 'endDateTime'},
 
@@ -182,13 +187,16 @@ export default {
           observation.params.leftEnd = this.scales[endLine].xScale(observation.params.endIndexLine)
           observation.params.zIndex = counter
 
+          if (this.observationColorByData) {
+            observation.params.color = this.observationColorByData.colors[observation.data[this.observationColorByData.key]]
+          }
+
           filteredObservationsList.push(observation)
 
           counter--
         }
       }
 
-      console.log(filteredObservationsList)
       return filteredObservationsList
     },
   },
@@ -285,6 +293,7 @@ export default {
               let data = {}
               data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
               data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
+              data['type'] = 'I'
               this.$emit('selectObservation', data)
               this.observationPointerEvents = 'all'
             }))
@@ -381,9 +390,10 @@ export default {
   pointer-events: v-bind(observationPointerEvents);
   position: absolute;
   width: 100%;
-  background-color: rgba(30, 255, 109, 0.21);
+  background-color: v-bind(observationDefaultColor);
+  opacity: v-bind(observationOpacity);
 }
 .observation:hover{
-  background-color: rgba(30, 255, 109, 0.5);
+  opacity: calc(v-bind(observationOpacity) + 0.2);
 }
 </style>
