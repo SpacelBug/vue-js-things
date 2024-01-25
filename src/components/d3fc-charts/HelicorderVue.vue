@@ -44,7 +44,9 @@
     <div class="graph-side-panel">
       <div class="time-labels">
         <div class="time-label" v-for="(_, index) in slicedData">
-          {{ new Date(new Date(startDateTime).setSeconds(startDateTime.getSeconds() + (minutesInARow * 60) * index)).toLocaleString().split(', ')[1] }}
+          <template v-if="timeLabelByLineIndex(index)">
+            {{ timeLabelByLineIndex(index).toISOString().split('T')[1].split('.')[0] }}
+          </template>
         </div>
       </div>
     </div>
@@ -228,6 +230,18 @@ export default {
     await this.plot()
   },
   methods: {
+    timeLabelByLineIndex(lineIndex) {
+      let date = new Date(this.startDateTime)
+      date.setSeconds(this.startDateTime.getSeconds() + (this.minutesInARow * 60) * lineIndex)
+
+      let dateFromStart = new Date(this.startDateTime)
+
+      if (dateFromStart.getMinutes() % 10 === date.getMinutes() % 10) {
+        return date
+      } else {
+        return null
+      }
+    },
     getDateTimeBySeconds(seconds) {
       /***
        * Возвращает время являющееся суммой времени начала и переданных в функцию секунд
