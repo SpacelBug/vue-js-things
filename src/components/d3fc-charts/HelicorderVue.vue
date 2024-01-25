@@ -18,7 +18,6 @@
       <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
       <div class="observation"
            v-for="observation in processLoadedObservation"
-           :title="`${observation.data.startDateTime} - ${observation.data.endDateTime}`"
            :style="`height: ${observation.params.height}px;
            clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
            top: ${observation.params.top}px;
