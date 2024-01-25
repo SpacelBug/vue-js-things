@@ -132,7 +132,7 @@ export default {
             .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
         let yScale = d3.scaleLinear()
             .domain([d3.min(data) * this.gain, d3.max(data) * this.gain])
-            .range([this.lineHeight, 0])
+            .range([0, this.lineHeight])
         scales.push({xScale: xScale, yScale: yScale})
       }
 
