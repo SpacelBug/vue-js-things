@@ -62,7 +62,7 @@
 import * as d3 from 'd3'
 import * as fc from 'd3fc'
 
-import HelicorderFilter from "@/components/d3fc-charts/helicorder/HelicorderFilter";
+import HelicorderFilter from "./HelicorderFilter";
 
 export default {
   name: "HelicorderVue",
