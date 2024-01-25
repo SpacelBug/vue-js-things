@@ -23,7 +23,9 @@
            clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
            top: ${observation.params.top}px;
            z-index: ${observation.params.zIndex};`"
-           @click="$emit('observationClick', observation.data)"/>
+           @click="$emit('observationClick', observation.data)"
+           @mouseenter="$emit('observationEnter', observation.data)"
+           @mouseleave="$emit('observationLeave', observation.data)"/>
       <div class="vertical-lines">
         <div class="vertical-line" v-for="_  in [...Array(minutesInARow + 1).keys()]"></div>
       </div>
@@ -63,7 +65,7 @@ export default {
     graphCaption: {type: String, default: 'Helicorder'},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
-  emits: ['selectObservation', 'observationClick'],
+  emits: ['selectObservation', 'observationClick', 'observationEnter', 'observationLeave'],
   data() { return {
       linesInfo: {}, // scales для каждой линии
 
