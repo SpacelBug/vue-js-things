@@ -264,14 +264,16 @@ export default {
     },
     async drawCanvasLine(data, index) {
 
-      let canvas = d3.select(this.$refs["canvas-box"]).append('canvas')
-            .attr('width', this.width)
-            .attr('height', this.lineHeight)
+      let gainedLinePos = (this.lineHeight * index) - ((this.lineHeight * this.gain) - this.lineHeight) / 2
+
+      let canvas = d3.select(this.$refs["canvas-box"])
+          .append('div')
+            .attr('style', `height: ${this.lineHeight}px; width: ${this.width}px;`)
             .on('mousemove', (()=>{
               this.secondInCursor = (Math.round(this.scales[index].xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
 
               this.cursorPosX = d3.pointer(event)[0]
-              this.cursorPosY = this.lineHeight * (index)
+              this.cursorPosY = this.lineHeight * index
 
               if ((this.cursorStartLineIndex <= (index)) && this.cursorIsStretching) {
 
@@ -303,6 +305,10 @@ export default {
               this.$emit('selectObservation', data)
               this.observationPointerEvents = 'all'
             }))
+          .append('canvas')
+            .attr('width', this.width)
+            .attr('height', this.lineHeight * this.gain)
+            .attr('style', `position: absolute; top: ${gainedLinePos}px; left: 0px; pointer-events: none;`)
             .node()
 
       let ctx = canvas.getContext('2d')
@@ -314,6 +320,7 @@ export default {
           .yScale(this.scales[index].yScale)
           .context(ctx)
           .decorate((context, datum, index) => {
+              context.fillStyle = 'rgba(255,255,255,0)'
               context.strokeStyle = this.graphStrokeColor;
           })
 
@@ -330,7 +337,7 @@ export default {
   grid-gap: 10px;
   grid-template: "header header"
                  "side-panel graph"
-                 "footer footer";
+                 "footer footer" / 80px auto;
 }
 .graph-header{
   display: flex;
@@ -342,23 +349,25 @@ export default {
   grid-area: side-panel;
 }
 .time-labels{
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
 .time-label{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: v-bind(lineHeight + 'px');
 }
 .graph-footer{
   grid-area: footer;
 }
 .graph-container{
+  overflow: hidden;
   position: relative;
   grid-area: graph;
 }
 .svg-container{
-  display: flex;
-  flex-direction: column;
-}
-.canvas-container{
   display: flex;
   flex-direction: column;
 }
