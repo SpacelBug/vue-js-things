@@ -7,14 +7,12 @@
       <div class="graph-caption">{{graphCaption}}</div>
     </div>
     <div v-if="observationColorByData" class="observations-filters">
-      <form ref="filtersForm">
-        <div v-for="(color, key) in observationColorByData.colors"
-             class="filter"
-             :style="`background-color: ${color}`">
-          <input type="checkbox" checked v-model="observationsStatus[key]">
-          {{key}}
-        </div>
-      </form>
+      <div v-for="(color, key) in observationColorByData.colors"
+           class="filter"
+           :style="`background-color: ${color}`">
+        <input type="checkbox" checked v-model="observationsStatus[key]">
+        {{key}}
+      </div>
     </div>
     <div ref="target"
          class="graph-container"
