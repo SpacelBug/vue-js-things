@@ -125,6 +125,7 @@
       <div class="chart-example-container-chart" v-if="selectedChart === $refs.HelicorderVueCanvas">
         <helicorder-vue
             :helicorder-data="helicorderData"
+            :max-data="1"
             :loaded-observation="helicorderLoadedObservation"
             :observation-color-by-data="{key: 'type', colors: {'I': '#58a95f'}}"
             :minutes-in-a-row="5"
