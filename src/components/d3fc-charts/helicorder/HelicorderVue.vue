@@ -204,13 +204,13 @@ export default {
       let counter = this.loadedObservation.length
       for (let observation of listOfObservations) {
         if (
-            (observation.data.startDateTime.getTime() > this.startDateTime.getTime()) &&
-            (observation.data.endDateTime.getTime() > this.startDateTime.getTime()) &&
-            (observation.data.startDateTime.getTime() < this.endDateTime.getTime()) &&
-            (observation.data.endDateTime.getTime() < this.endDateTime.getTime())
+            (observation.data[this.startDateTimeKey].getTime() > this.startDateTime.getTime()) &&
+            (observation.data[this.endDateTimeKey].getTime() > this.startDateTime.getTime()) &&
+            (observation.data[this.startDateTimeKey].getTime() < this.endDateTime.getTime()) &&
+            (observation.data[this.endDateTimeKey].getTime() < this.endDateTime.getTime())
         ) {
-          let startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
-          let endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          let startIndexGlobal =  ((observation.data[this.startDateTimeKey].getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          let endIndexGlobal = ((observation.data[this.endDateTimeKey].getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
 
           let startLine = Math.floor(startIndexGlobal / this.sliceRange)
           let endLine = Math.floor(endIndexGlobal / this.sliceRange)
