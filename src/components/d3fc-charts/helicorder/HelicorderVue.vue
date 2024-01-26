@@ -120,6 +120,12 @@ export default {
     }
   },
   computed: {
+    endDateTime() {
+      let endDateTime = new Date(this.startDateTime)
+      let secondsInEndPoint = Math.round((1 / this.samplingRate) * this.helicorderData.length)
+      endDateTime.setSeconds(endDateTime.getSeconds() + secondsInEndPoint)
+      return endDateTime
+    },
     cursorDateTime() {
       /***
        * Время в текущей позиции курсора
@@ -199,8 +205,10 @@ export default {
       let counter = this.loadedObservation.length
       for (let observation of listOfObservations) {
         if (
-            (observation.data.startDateTime.getTime() > this.startDateTime) &&
-            (observation.data.endDateTime.getTime() > this.startDateTime)
+            (observation.data.startDateTime.getTime() > this.startDateTime.getTime()) &&
+            (observation.data.endDateTime.getTime() > this.startDateTime.getTime()) &&
+            (observation.data.startDateTime.getTime() < this.endDateTime.getTime()) &&
+            (observation.data.endDateTime.getTime() < this.endDateTime.getTime())
         ) {
           let startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
           let endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
