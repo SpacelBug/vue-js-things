@@ -364,6 +364,7 @@ export default {
           .crossValue((_, i) => i)
           .xScale(this.scales[index].xScale)
           .yScale(this.scales[index].yScale)
+          .defined(d => d)
           .context(ctx)
           .decorate((context, datum, index) => {
               context.fillStyle = 'rgba(255,255,255,0)'
