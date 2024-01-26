@@ -4,7 +4,9 @@
          checked
          ref="checkbox"
          @click="changeStatus">
-  {{caption}}
+  <div class="filter-caption">
+    {{caption}}
+  </div>
 </div>
 </template>
 
@@ -27,6 +29,9 @@ export default {
 
 <style scoped>
 .filter{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
   cursor: pointer;
   user-select: none;
   background-color: v-bind(backgroundColor);
