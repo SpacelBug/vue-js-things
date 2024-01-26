@@ -128,7 +128,7 @@ export default {
 
       date.setSeconds(date.getSeconds() + Math.round(this.secondInCursor))
 
-      return date
+      return date.toISOString()
     },
     sliceRange() {
       /***
@@ -202,19 +202,19 @@ export default {
             (observation.data.startDateTime.getTime() > this.startDateTime) &&
             (observation.data.endDateTime.getTime() > this.startDateTime)
         ) {
-          observation.params.startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
-          observation.params.endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          let startIndexGlobal =  ((observation.data.startDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          let endIndexGlobal = ((observation.data.endDateTime.getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
 
-          let startLine = Math.floor(observation.params.startIndexGlobal / this.sliceRange)
-          let endLine = Math.ceil(observation.params.endIndexGlobal / this.sliceRange)
+          let startLine = Math.floor(startIndexGlobal / this.sliceRange)
+          let endLine = Math.floor(endIndexGlobal / this.sliceRange)
 
-          observation.params.startIndexLine = observation.params.startIndexGlobal % this.sliceRange
-          observation.params.endIndexLine =  observation.params.endIndexGlobal % this.sliceRange
+          let startIndexLine = startIndexGlobal % this.sliceRange
+          let endIndexLine =  endIndexGlobal % this.sliceRange
 
-          observation.params.height = (endLine - startLine) * this.lineHeight
+          observation.params.height = startLine === endLine ? this.lineHeight : (endLine - startLine + 1) * this.lineHeight
           observation.params.top = startLine * this.lineHeight
-          observation.params.leftStart = this.scales[startLine].xScale(observation.params.startIndexLine)
-          observation.params.leftEnd = this.scales[endLine].xScale(observation.params.endIndexLine)
+          observation.params.leftStart = this.scales[startLine].xScale(startIndexLine)
+          observation.params.leftEnd = this.scales[endLine].xScale(endIndexLine)
           observation.params.zIndex = counter
 
           if (this.observationColorByData) {
@@ -330,6 +330,9 @@ export default {
               this.observationPointerEvents = 'none'
             }))
             .on('mouseup', (()=>{
+              console.log('line number ', index)
+              console.log('line number ', this.scales[index])
+
               this.cursorIsStretching = false
               this.cursorEndPosX = d3.pointer(event)[0]
               this.$refs.cursor.style.height = `${this.lineHeight}px`
