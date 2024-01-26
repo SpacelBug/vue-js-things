@@ -117,6 +117,7 @@ export default {
     },
     async minutesInARow() {
       await this.plot()
+      this.$refs.cursor.style.height = `${this.lineHeight}px`
     }
   },
   computed: {
