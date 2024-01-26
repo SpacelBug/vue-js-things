@@ -86,7 +86,6 @@ export default {
 
     width: {type: Number, default: 400},
     height: {type: Number, default: 500},
-    type: {type: String, default: 'svg'},
     graphCaption: {type: String, default: 'Helicorder'},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
@@ -296,13 +295,7 @@ export default {
       let promises = [...Array(this.slicedData.length).keys()].map(async (index)=>{
 
         setTimeout(async ()=> {
-          if (this.type === 'svg') {
-            await this.drawSvgLine(this.slicedData[index], index)
-          } else if (this.type === 'canvas') {
-            await this.drawCanvasLine(this.slicedData[index], index)
-          } else if (this.type === 'webgl') {
-            await this.drawWebGlLine(this.slicedData[index], index)
-          }
+          await this.drawSvgLine(this.slicedData[index], index)
         }, 0)
 
       })
