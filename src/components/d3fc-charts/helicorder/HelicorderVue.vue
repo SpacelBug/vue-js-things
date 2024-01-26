@@ -46,7 +46,7 @@
       <div class="time-labels">
         <div class="time-label" v-for="(_, index) in slicedData">
           <template v-if="timeLabelByLineIndex(index)">
-            {{ timeLabelByLineIndex(index).toISOString().split('T')[1].split('.')[0] }}
+            {{ timeLabelByLineIndex(index).toTimeString().split(' ')[0] }}
           </template>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default {
 
       date.setSeconds(date.getSeconds() + Math.round(this.secondInCursor))
 
-      return date.toISOString()
+      return date.toLocaleString()
     },
     sliceRange() {
       /***
