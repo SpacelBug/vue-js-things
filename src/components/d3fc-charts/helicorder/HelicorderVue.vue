@@ -295,7 +295,7 @@ export default {
       let promises = [...Array(this.slicedData.length).keys()].map(async (index)=>{
 
         setTimeout(async ()=> {
-          await this.drawSvgLine(this.slicedData[index], index)
+          await this.drawCanvasLine(this.slicedData[index], index)
         }, 0)
 
       })
