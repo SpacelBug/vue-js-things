@@ -331,9 +331,6 @@ export default {
               this.observationPointerEvents = 'none'
             }))
             .on('mouseup', (()=>{
-              console.log('line number ', index)
-              console.log('line number ', this.scales[index])
-
               this.cursorIsStretching = false
               this.cursorEndPosX = d3.pointer(event)[0]
               this.$refs.cursor.style.height = `${this.lineHeight}px`
