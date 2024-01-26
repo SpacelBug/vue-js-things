@@ -33,6 +33,7 @@
              z-index: ${observation.params.zIndex};
              background-color: ${observation.params.color};`"
              @click="$emit('observationClick', observation.data)"
+             @contextmenu="$emit('observationContext', observation.data)"
              @mouseenter="$emit('observationEnter', observation.data)"
              @mouseleave="$emit('observationLeave', observation.data)"/>
       </template>
