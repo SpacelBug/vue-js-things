@@ -31,6 +31,8 @@ export default {
 .filter{
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   cursor: pointer;
   user-select: none;
