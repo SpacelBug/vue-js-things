@@ -90,7 +90,7 @@ export default {
     graphCaption: {type: String, default: 'Helicorder'},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
-  emits: ['selectObservation', 'observationClick', 'observationEnter', 'observationLeave'],
+  emits: ['selectObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext'],
   data() { return {
       linesInfo: {}, // scales для каждой линии
 
