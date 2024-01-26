@@ -338,10 +338,15 @@ export default {
               let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
 
               let data = {}
+
               data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
               data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
               data['type'] = 'I'
-              this.$emit('selectObservation', data)
+
+              let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX))
+              let endGlobalDataIndex = Math.round((index * this.sliceRange) + this.scales[index].xScale.invert(this.cursorEndPosX))
+
+              this.$emit('selectObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
               this.observationPointerEvents = 'all'
             }))
           .append('canvas')
