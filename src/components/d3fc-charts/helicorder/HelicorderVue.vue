@@ -100,7 +100,7 @@ export default {
       secondInCursor: null, // кол-во секунд в позиции курсора
 
       cursorStartPosX: null, // начальная позиция курсора по x (для выделения)
-      cursorStartPosY: null, // начальная позиция курсора по y (для выделения)
+      stretchingCursorHeight: null, // начальная позиция курсора по y (для выделения)
       cursorEndPosX: null, // конечная позиция курсора по x (для выделения)
       cursorStartLineIndex: null, // начальная линия ()
       cursorIsStretching: false, // происходит ли выделение
@@ -327,7 +327,7 @@ export default {
             }))
             .on('mousedown', (()=>{
               this.cursorStartLineIndex = index
-              this.cursorStartPosY = this.lineHeight * (index)
+              this.stretchingCursorHeight = this.lineHeight * (index)
               this.cursorIsStretching = true
               this.cursorStartPosX = d3.pointer(event)[0]
               this.observationPointerEvents = 'none'
@@ -445,7 +445,7 @@ export default {
 }
 .stretching-cursor{
   width: 100%;
-  top: v-bind(cursorStartPosY + 'px');
+  top: v-bind(stretchingCursorHeight + 'px');
   left: 0;
   clip-path: polygon(v-bind(cursorForm));
 }
