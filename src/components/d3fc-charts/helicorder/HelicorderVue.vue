@@ -226,12 +226,13 @@ export default {
           observation.params.leftEnd = this.scales[endLine].xScale(endIndexLine)
           observation.params.zIndex = counter
 
-          if (this.observationColorByData) {
+          if (this.observationColorByData && (observation.data.hasOwnProperty(this.observationColorByData.key))) {
             observation.params.color = this.observationColorByData.colors[observation.data[this.observationColorByData.key]]
+          } else {
+            observation.data[this.observationColorByData.key] = null
           }
 
           filteredObservationsList.push(observation)
-
           counter--
         }
       }
@@ -239,10 +240,13 @@ export default {
       return filteredObservationsList
     },
   },
-  async mounted() {
+  async beforeMount() {
+    await (this.observationColorByData.colors.null = this.observationDefaultColor)
+
     for (let key in this.observationColorByData.colors) {
       this.observationsStatus[key] = true
     }
+
     await this.plot()
   },
   methods: {
@@ -345,7 +349,6 @@ export default {
 
                 data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
                 data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
-                data['type'] = 'I'
 
                 let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX))
                 let endGlobalDataIndex = Math.round((index * this.sliceRange) + this.scales[index].xScale.invert(this.cursorEndPosX))
