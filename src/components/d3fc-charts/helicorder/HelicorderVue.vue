@@ -333,24 +333,28 @@ export default {
               this.observationPointerEvents = 'none'
             }))
             .on('mouseup', (()=>{
-              this.cursorIsStretching = false
-              this.cursorEndPosX = d3.pointer(event)[0]
-              this.$refs.cursor.style.height = `${this.lineHeight}px`
+              if (this.cursorStartPosX !== null) {
+                this.cursorIsStretching = false
+                this.cursorEndPosX = d3.pointer(event)[0]
+                this.$refs.cursor.style.height = `${this.lineHeight}px`
 
-              let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
-              let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
+                let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
+                let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
 
-              let data = {}
+                let data = {}
 
-              data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
-              data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
-              data['type'] = 'I'
+                data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
+                data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
+                data['type'] = 'I'
 
-              let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX))
-              let endGlobalDataIndex = Math.round((index * this.sliceRange) + this.scales[index].xScale.invert(this.cursorEndPosX))
+                let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX))
+                let endGlobalDataIndex = Math.round((index * this.sliceRange) + this.scales[index].xScale.invert(this.cursorEndPosX))
 
-              this.$emit('selectObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
-              this.observationPointerEvents = 'all'
+                this.$emit('selectObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
+
+                this.observationPointerEvents = 'all'
+                this.cursorStartPosX = null
+              }
             }))
           .append('canvas')
             .attr('width', this.width)
