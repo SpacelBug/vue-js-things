@@ -77,6 +77,8 @@ export default {
     minutesInARow: Number,
     startDateTime: new Date(),
 
+    cursorColor: {type: String, default: 'rgba(91,91,91)'},
+
     loadedObservation: {type: Array, default: []},
     observationDefaultColor: {type: String, default: 'rgba(91,91,91)'},
     observationColorByData: {key: String, colors: {}},
@@ -452,7 +454,8 @@ export default {
   left: v-bind(cursorPosX + 'px');
   height: v-bind(lineHeight + 'px');
   width: 2px;
-  background-color: rgba(91, 68, 68, 0.62);
+  background-color: v-bind(cursorColor);
+  opacity: v-bind(observationOpacity);
 }
 .stretching-cursor{
   width: 100%;
