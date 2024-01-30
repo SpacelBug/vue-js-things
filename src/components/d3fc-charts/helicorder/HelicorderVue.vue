@@ -425,6 +425,7 @@ export default {
   overflow: hidden;
   position: relative;
   grid-area: graph;
+  z-index: 1;
 }
 .vertical-lines{
   pointer-events: none;
