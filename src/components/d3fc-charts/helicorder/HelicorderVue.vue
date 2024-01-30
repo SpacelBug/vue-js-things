@@ -47,7 +47,7 @@
       <div class="time-labels">
         <div class="time-label" v-for="(_, index) in slicedIndexes">
           <template v-if="timeLabelByLineIndex(index)">
-            {{ timeLabelByLineIndex(index).toTimeString().split(' ')[0] }}
+            {{ timeLabelByLineIndex(index) }}
           </template>
         </div>
       </div>
@@ -248,7 +248,7 @@ export default {
       let dateFromStart = new Date(this.startDateTime)
 
       if (dateFromStart.getMinutes() % 10 === date.getMinutes() % 10) {
-        return date
+        return date.toTimeString().split(' ')[0].slice(0, 5)
       } else {
         return null
       }
