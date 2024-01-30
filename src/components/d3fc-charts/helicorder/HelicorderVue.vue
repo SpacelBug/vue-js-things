@@ -396,6 +396,9 @@ export default {
                  "footer footer" / 80px auto;
 }
 .observations-filters{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
   grid-area: filters;
 }
 .graph-header{
