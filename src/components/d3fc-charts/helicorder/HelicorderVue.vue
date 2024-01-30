@@ -45,7 +45,7 @@
 
     <div class="graph-side-panel">
       <div class="time-labels">
-        <div class="time-label" v-for="(_, index) in slicedData">
+        <div class="time-label" v-for="(_, index) in slicedIndexes">
           <template v-if="timeLabelByLineIndex(index)">
             {{ timeLabelByLineIndex(index).toTimeString().split(' ')[0] }}
           </template>
@@ -143,49 +143,31 @@ export default {
        */
       return this.minutesInARow * 60 * this.samplingRate
     },
-    slicedData() {
+    slicedIndexes() {
       /***
        * Нарезает массив данных на полосы
        */
-      let data = []
+      let listOfIndexes = []
 
       let startIndex = 0
       let endIndex = 0
 
       for (let index of [...Array(Math.floor(this.helicorderData.length / this.sliceRange)).keys()]) {
         endIndex += this.sliceRange
-        data.push(this.helicorderData.slice(startIndex, endIndex))
+        listOfIndexes.push([startIndex, endIndex])
         startIndex = endIndex
       }
       if ((this.helicorderData.length % this.sliceRange) !== 0) {
-        data.push(this.helicorderData.slice(startIndex, this.helicorderData.length))
+        listOfIndexes.push([startIndex, this.helicorderData.length])
       }
 
-      return data
-    },
-    scales() {
-      /***
-       * Список со "scales" для всех полос
-       */
-      let scales = []
-
-      for (let data of this.slicedData) {
-        let xScale = d3.scaleLinear()
-            .domain([0, data.length])
-            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / data.length)])
-        let yScale = d3.scaleLinear()
-            .domain([-this.maxData, this.maxData])
-            .range([0, this.lineHeight * this.gain])
-        scales.push({xScale: xScale, yScale: yScale})
-      }
-
-      return scales
+      return listOfIndexes
     },
     lineHeight() {
       /***
        * Вычисляет высоту полосы в пикселях
        */
-      return Math.floor(this.height / this.slicedData.length)
+      return Math.floor(this.height / this.slicedIndexes.length)
     },
     cursorForm() {
       /***
@@ -222,8 +204,17 @@ export default {
 
           observation.params.height = startLine === endLine ? this.lineHeight : (endLine - startLine + 1) * this.lineHeight
           observation.params.top = startLine * this.lineHeight
-          observation.params.leftStart = this.scales[startLine].xScale(startIndexLine)
-          observation.params.leftEnd = this.scales[endLine].xScale(endIndexLine)
+
+          let xScaleStart = d3.scaleLinear()
+            .domain([0, this.sliceRange])
+            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / this.sliceRange)])
+          let xScaleEnd = d3.scaleLinear()
+            .domain([0, this.sliceRange])
+            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / this.sliceRange)])
+
+          observation.params.leftStart = xScaleStart(startIndexLine)
+          observation.params.leftEnd = xScaleEnd(endIndexLine)
+
           observation.params.zIndex = counter
 
           if (this.observationColorByData && (observation.data.hasOwnProperty(this.observationColorByData.key))) {
@@ -298,10 +289,12 @@ export default {
 
       d3.select(this.$refs["canvas-box"]).node().innerHTML = null
 
-      let promises = [...Array(this.slicedData.length).keys()].map(async (index)=>{
+      let promises = [...Array(this.slicedIndexes.length).keys()].map(async (index)=>{
+
+        let data = this.helicorderData.slice(this.slicedIndexes[index][0], this.slicedIndexes[index][1])
 
         setTimeout(async ()=> {
-          await this.drawCanvasLine(this.slicedData[index], index)
+          await this.drawCanvasLine(data, index)
         }, 0)
 
       })
@@ -312,11 +305,18 @@ export default {
 
       let gainedLinePos = (this.lineHeight * index) - ((this.lineHeight * this.gain) - this.lineHeight) / 2
 
+      let xScale = d3.scaleLinear()
+          .domain([0, data.length])
+          .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) /data.length)])
+      let yScale = d3.scaleLinear()
+          .domain([-this.maxData, this.maxData])
+          .range([0, this.lineHeight * this.gain])
+
       let canvas = d3.select(this.$refs["canvas-box"])
           .append('div')
             .attr('style', `height: ${this.lineHeight}px; width: ${this.width}px;`)
             .on('mousemove', (()=>{
-              this.secondInCursor = (Math.round(this.scales[index].xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
+              this.secondInCursor = (Math.round(xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
 
               this.cursorPosX = d3.pointer(event)[0]
               this.cursorPosY = this.lineHeight * index
@@ -342,16 +342,16 @@ export default {
                 this.cursorEndPosX = d3.pointer(event)[0]
                 this.$refs.cursor.style.height = `${this.lineHeight}px`
 
-                let startSeconds = ((this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
-                let endSeconds = ((this.scales[index].xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
+                let startSeconds = ((xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
+                let endSeconds = ((xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
 
                 let data = {}
 
                 data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
                 data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
 
-                let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + this.scales[this.cursorStartLineIndex].xScale.invert(this.cursorStartPosX))
-                let endGlobalDataIndex = Math.round((index * this.sliceRange) + this.scales[index].xScale.invert(this.cursorEndPosX))
+                let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
+                let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
 
                 this.$emit('selectObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
 
@@ -370,8 +370,8 @@ export default {
       let line = fc.seriesCanvasLine()
           .mainValue(d => d)
           .crossValue((_, i) => i)
-          .xScale(this.scales[index].xScale)
-          .yScale(this.scales[index].yScale)
+          .xScale(xScale)
+          .yScale(yScale)
           .defined(d => d)
           .context(ctx)
           .decorate((context, datum, index) => {
