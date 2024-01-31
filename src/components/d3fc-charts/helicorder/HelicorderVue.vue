@@ -24,7 +24,7 @@
 
       <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
 
-      <template v-for="observation in processLoadedObservation">
+      <template v-for="(observation, index) in processLoadedObservation">
         <div class="observation"
              v-if="observationsStatus[observation.data[observationColorByData.key]]"
              :style="`height: ${observation.params.height}px;
@@ -32,8 +32,8 @@
              top: ${observation.params.top}px;
              z-index: ${observation.params.zIndex};
              background-color: ${observation.params.color};`"
-             @click="$emit('observationClick', observation.data)"
-             @contextmenu="$emit('observationContext', observation.data)"
+             @click="$emit('observationClick', observation.data, index)"
+             @contextmenu="$emit('observationContext', observation.data, index)"
              @mouseenter="$emit('observationEnter', observation.data)"
              @mouseleave="$emit('observationLeave', observation.data)"/>
       </template>
@@ -92,7 +92,7 @@ export default {
     graphCaption: {type: String, default: 'Helicorder'},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
-  emits: ['selectObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext'],
+  emits: ['createObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext'],
   data() { return {
       linesInfo: {}, // scales для каждой линии
 
@@ -355,7 +355,7 @@ export default {
                 let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
                 let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
 
-                this.$emit('selectObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                this.$emit('createObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
 
                 this.observationPointerEvents = 'all'
                 this.cursorStartPosX = null
