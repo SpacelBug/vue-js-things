@@ -133,7 +133,9 @@
             :start-date-time="new Date()"
             :width = "1600"
             :type="'canvas'"
-            :chart-caption="'HelicorderVue (canvas)'" @selectObservation="createObservation"/>
+            :chart-caption="'HelicorderVue (canvas)'"
+            @createObservation="createObservation"
+            @observationClick="testObservationClick"/>
       </div>
       <div class="chart-example-container-code"></div>
     </div>
@@ -182,6 +184,9 @@ export default {
   methods: {
     createObservation(data) {
       this.helicorderLoadedObservation.push(data)
+    },
+    testObservationClick(data, index) {
+      console.log(data, index)
     }
   }
 }
