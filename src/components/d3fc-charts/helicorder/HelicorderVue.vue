@@ -17,25 +17,29 @@
          ref="target"
          @mouseenter="$refs.cursor.style.visibility = 'visible'"
          @mouseleave="$refs.cursor.style.visibility = 'hidden'">
-      <div :width="width"
-           :height="height"
-           ref="canvas-box"
+      <div ref="canvas-box"
            class="canvas-container"/>
 
-      <div :class="['cursor', {'stretching-cursor': cursorIsStretching}]" ref="cursor"></div>
+      <svg v-if="cursorIsStretching" class="svg-cursor">
+        <polygon :points="cursorForm" :style="`fill: ${observationDefaultColor};`"/>
+      </svg>
+      <div v-else class="cursor" ref="cursor"></div>
 
       <template v-for="(observation, index) in processLoadedObservation">
-        <div class="observation"
-             v-if="observationsStatus[observation.data[observationColorByData.key]]"
+        <svg class="observation-svg"
              :style="`height: ${observation.params.height}px;
-             clip-path: polygon(${observationClipPath(observation.params.leftStart , observation.params.leftEnd)});
              top: ${observation.params.top}px;
-             z-index: ${observation.params.zIndex};
-             background-color: ${observation.params.color};`"
+             z-index: ${observation.params.zIndex};`">
+        <polygon class="observation"
+             v-if="observationsStatus[observation.data[observationColorByData.key]]"
+             :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
+             :style="`
+             fill: ${observation.params.color};`"
              @click="$emit('observationClick', observation.data, index)"
              @contextmenu="$emit('observationContext', observation.data, index)"
              @mouseenter="$emit('observationEnter', observation.data)"
              @mouseleave="$emit('observationLeave', observation.data)"/>
+        </svg>
       </template>
 
       <div class="vertical-lines">
@@ -77,10 +81,10 @@ export default {
     minutesInARow: Number,
     startDateTime: new Date(),
 
-    cursorColor: {type: String, default: 'rgba(91,91,91)'},
+    cursorColor: {type: String, default: 'rgba(183,18,18,0.7)'},
 
     loadedObservation: {type: Array, default: []},
-    observationDefaultColor: {type: String, default: 'rgba(91,91,91)'},
+    observationDefaultColor: {type: String, default: 'rgba(183,18,18,0.7)'},
     observationColorByData: {key: String, colors: {}},
     observationOpacity: {type: String, default: '0.7'},
 
@@ -102,6 +106,7 @@ export default {
       secondInCursor: null, // кол-во секунд в позиции курсора
 
       cursorStartPosX: null, // начальная позиция курсора по x (для выделения)
+      cursorStartPosY: null, // начальная позиция курсора по y (для выделения)
       stretchingCursorHeight: null, // начальная позиция курсора по y (для выделения)
       cursorEndPosX: null, // конечная позиция курсора по x (для выделения)
       cursorStartLineIndex: null, // начальная линия ()
@@ -173,9 +178,9 @@ export default {
     },
     cursorForm() {
       /***
-       * Задает параметры для формы курсора с помощью метода observationClipPath()
+       * Задает параметры для формы курсора с помощью метода observationPolygon()
        */
-      return this.observationClipPath(this.cursorStartPosX, this.cursorPosX)
+      return this.observationPolygon(this.stretchingCursorHeight, this.cursorStartPosX, this.cursorPosX)
     },
     processLoadedObservation() {
       /***
@@ -265,25 +270,27 @@ export default {
 
       return new Date(date)
     },
-    observationClipPath(startPos, endPos) {
+    observationPolygon(height, startPos, endPos) {
       /***
        * Возвращает строку определяющую форму маркера наблюдения для css свойства clip-path
        */
-      let clipPath = [
-          `0px ${this.lineHeight}px`,
-          `${startPos}px ${this.lineHeight}px`,
-          `${startPos}px 0px`,
+      let width = this.$refs["canvas-box"].offsetWidth
 
-          `100% 0px`,
+      let polygon = [
+          `0 ${this.lineHeight}`,
+          `${startPos} ${this.lineHeight}`,
+          `${startPos} 0`,
 
-          `100% calc(100% - ${this.lineHeight}px)`,
-          `${endPos}px calc(100% - ${this.lineHeight}px)`,
-          `${endPos}px 100%`,
+          `${width} 0`,
 
-          `0px 100%`
+          `${width} ${height - this.lineHeight}`,
+          `${endPos} ${height - this.lineHeight}`,
+          `${endPos} ${height}`,
+
+          `0 ${height}`,
       ]
 
-      return clipPath.join(',')
+      return polygon.join(',')
     },
     async plot() {
 
@@ -325,24 +332,21 @@ export default {
 
               if ((this.cursorStartLineIndex <= (index)) && this.cursorIsStretching) {
 
-                let cursorHeight = this.cursorStartLineIndex !== index + 1 ?
-                    this.lineHeight * ((index + 1) - this.cursorStartLineIndex) : this.lineHeight
-
-                this.$refs.cursor.style.height = `${(Math.abs(cursorHeight))}px`
+                this.stretchingCursorHeight = this.cursorStartLineIndex !== index + 1 ?
+                this.lineHeight * ((index + 1) - this.cursorStartLineIndex) : this.lineHeight
               }
             }))
             .on('mousedown', (()=>{
               this.cursorStartLineIndex = index
-              this.stretchingCursorHeight = this.lineHeight * (index)
               this.cursorIsStretching = true
               this.cursorStartPosX = d3.pointer(event)[0]
+              this.cursorStartPosY = index * this.lineHeight
               this.observationPointerEvents = 'none'
             }))
             .on('mouseup', (()=>{
               if (this.cursorStartPosX !== null) {
                 this.cursorIsStretching = false
                 this.cursorEndPosX = d3.pointer(event)[0]
-                this.$refs.cursor.style.height = `${this.lineHeight}px`
 
                 let startSeconds = ((xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
                 let endSeconds = ((xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
@@ -457,20 +461,35 @@ export default {
   background-color: v-bind(cursorColor);
   opacity: v-bind(observationOpacity);
 }
-.stretching-cursor{
+.svg-cursor{
   width: 100%;
-  top: v-bind(stretchingCursorHeight + 'px');
-  left: 0;
-  clip-path: polygon(v-bind(cursorForm));
+  height: 100%;
+  pointer-events: none;
+  top: v-bind(cursorStartPosY + 'px');
+  position: absolute;
+}
+.observation-svg{
+  pointer-events: none;
+  top: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 .observation{
   pointer-events: v-bind(observationPointerEvents);
   position: absolute;
   width: 100%;
-  background-color: v-bind(observationDefaultColor);
-  opacity: v-bind(observationOpacity);
+  fill: v-bind(observationDefaultColor);
+}
+.observation:after{
+  content: '';
+  position: absolute;
+  clip-path: inherit;
+  height: inherit;
+  width: 100%;
 }
 .observation:hover{
-  opacity: calc(v-bind(observationOpacity) + 0.2);
+  stroke: black;
+  stroke-width: 2px;
 }
 </style>
