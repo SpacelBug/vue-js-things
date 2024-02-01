@@ -33,8 +33,7 @@
         <polygon class="observation"
              v-if="observationsStatus[observation.data[observationColorByData.key]]"
              :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
-             :style="`
-             fill: ${observation.params.color};`"
+             :style="`fill: ${observation.params.color};`"
              @click="$emit('observationClick', observation.data, index)"
              @contextmenu="$emit('observationContext', observation.data, index)"
              @mouseenter="$emit('observationEnter', observation.data)"
@@ -81,10 +80,10 @@ export default {
     minutesInARow: Number,
     startDateTime: new Date(),
 
-    cursorColor: {type: String, default: 'rgba(183,18,18,0.7)'},
+    cursorColor: {type: String, default: 'rgba(80,80,80,0.5)'},
 
     loadedObservation: {type: Array, default: []},
-    observationDefaultColor: {type: String, default: 'rgba(183,18,18,0.7)'},
+    observationDefaultColor: {type: String, default: 'rgba(80,80,80,0.5)'},
     observationColorByData: {key: String, colors: {}},
     observationOpacity: {type: String, default: '0.7'},
 
@@ -276,7 +275,20 @@ export default {
        */
       let width = this.$refs["canvas-box"].offsetWidth
 
-      let polygon = [
+      let polygon = []
+
+      if (height === this.lineHeight) {
+        polygon = [
+          `${startPos} 0`,
+
+          `${endPos} 0`,
+
+          `${endPos} ${height}`,
+
+          `${startPos} ${height}`,
+        ]
+      } else {
+        polygon = [
           `0 ${this.lineHeight}`,
           `${startPos} ${this.lineHeight}`,
           `${startPos} 0`,
@@ -288,7 +300,8 @@ export default {
           `${endPos} ${height}`,
 
           `0 ${height}`,
-      ]
+        ]
+      }
 
       return polygon.join(',')
     },
