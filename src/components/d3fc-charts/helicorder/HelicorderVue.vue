@@ -294,7 +294,7 @@ export default {
       /***
        * Возвращает строку определяющую форму маркера наблюдения для css свойства clip-path
        */
-      let width = this.$refs["canvas-box"].offsetWidth
+      let width = this.width
 
       let polygon = []
 
