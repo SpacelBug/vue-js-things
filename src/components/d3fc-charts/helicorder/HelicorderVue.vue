@@ -203,7 +203,8 @@ export default {
 
       let filteredObservationsList = []
 
-      let counter = this.unsavedObservations.length
+      let index = 0
+      let counter = listOfObservations.length
       for (let observation of listOfObservations) {
         if (
             (observation.data[this.startDateTimeKey].getTime() > this.startDateTime.getTime()) &&
@@ -236,13 +237,18 @@ export default {
           observation.params.zIndex = counter
 
           if (this.observationFilters && (observation.data.hasOwnProperty(this.observationFilters.key))) {
-            observation.params.color = this.observationFilters.colors[observation.data[this.observationFilters.key]]
+            if (this.selectedObservationIndexes.has(index)) {
+              observation.params.color = 'rgba(100,168,52,0.74)'
+            } else {
+              observation.params.color = this.observationFilters.colors[observation.data[this.observationFilters.key]]
+            }
           } else {
             observation.data[this.observationFilters.key] = null
           }
 
           filteredObservationsList.push(observation)
           counter--
+          index++
         }
       }
 
