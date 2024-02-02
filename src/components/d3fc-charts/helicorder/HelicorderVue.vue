@@ -490,7 +490,6 @@ export default {
   height: v-bind(lineHeight + 'px');
   width: 2px;
   background-color: v-bind(cursorColor);
-  opacity: v-bind(observationOpacity);
 }
 .svg-cursor{
   width: 100%;
