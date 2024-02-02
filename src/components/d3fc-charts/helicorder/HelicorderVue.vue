@@ -1,11 +1,5 @@
 <template>
   <div class="main-container">
-    <div class="graph-header">
-      <div class="graph-gain">
-        X: <input type="number" v-model="gain" @change="plot()">
-      </div>
-    </div>
-
     <div class="observations-filters" v-if="observationFilters">
       <template v-for="(color, key) in observationFilters.colors">
         <helicorder-filter :background-color="String(color)" :caption="key" v-model="observationsStatus[key]"/>
@@ -45,6 +39,9 @@
     </div>
 
     <div class="graph-side-panel">
+      <div class="graph-gain">
+        <b>X</b> <input type="number" v-model="gain" @change="plot()">
+      </div>
       <div class="graph-caption">{{graphCaption}}</div>
       <div class="time-labels">
         <div class="time-label" v-for="(_, index) in slicedIndexes">
@@ -436,7 +433,7 @@ export default {
   grid-template: "filters filters"
                  "header header"
                  "side-panel graph"
-                 "footer footer" / 80px auto;
+                 "footer footer"
 }
 .observations-filters{
   display: flex;
@@ -444,16 +441,24 @@ export default {
   gap: 10px;
   grid-area: filters;
 }
-.graph-header{
+.graph-gain{
   display: flex;
+  gap: 10px;
   flex-direction: row;
-  justify-content: space-between;
-  grid-area: header;
+  align-items: center;
+  grid-area: graph-gain;
+}
+.graph-gain input[type='number']{
+  text-align: center;
+  appearance: none;
+  width: 30px;
 }
 .graph-side-panel{
   display: grid;
   align-items: center;
-  grid-template: "graph-caption time-labels" / 20px auto;
+  grid-template: "graph-gain time-labels" 20px
+                 "graph-caption time-labels";
+  column-gap: 5px;
   grid-area: side-panel;
 }
 .graph-caption{
