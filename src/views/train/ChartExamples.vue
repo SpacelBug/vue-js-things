@@ -127,7 +127,7 @@
             :helicorder-data="helicorderData"
             :max-data="1"
             :loaded-observation="helicorderLoadedObservation"
-            :observation-color-by-data="{key: 'type', colors: {'I': '#58a95f', 'II': '#a9a558'}}"
+            :observation-filters="{key: 'type', colors: {'I': '#58a95f', 'II': '#a9a558'}}"
             :minutes-in-a-row="5"
             :sampling-rate="200"
             :start-date-time="new Date()"

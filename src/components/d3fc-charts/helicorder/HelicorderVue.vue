@@ -7,8 +7,8 @@
       <div class="graph-caption">{{graphCaption}}</div>
     </div>
 
-    <div class="observations-filters" v-if="observationColorByData">
-      <template v-for="(color, key) in observationColorByData.colors">
+    <div class="observations-filters" v-if="observationFilters">
+      <template v-for="(color, key) in observationFilters.colors">
         <helicorder-filter :background-color="color" :caption="key" v-model="observationsStatus[key]"/>
       </template>
     </div>
@@ -31,7 +31,6 @@
              top: ${observation.params.top}px;
              z-index: ${observation.params.zIndex};`">
         <polygon class="observation"
-             v-if="observationsStatus[observation.data[observationColorByData.key]]"
              :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
              :style="`fill: ${observation.params.color};`"
              @click="$emit('observationClick', observation.data, index)"
@@ -83,8 +82,9 @@ export default {
     cursorColor: {type: String, default: 'rgba(80,80,80,0.5)'},
 
     loadedObservation: {type: Array, default: []},
+    selectedObservationIndexes: [],
     observationDefaultColor: {type: String, default: 'rgba(80,80,80,0.5)'},
-    observationColorByData: {key: String, colors: {}},
+    observationFilters: {key: String, colors: {}},
     observationOpacity: {type: String, default: '0.7'},
 
     startDateTimeKey: {type: String, default: 'startDateTime'},
@@ -227,10 +227,10 @@ export default {
 
           observation.params.zIndex = counter
 
-          if (this.observationColorByData && (observation.data.hasOwnProperty(this.observationColorByData.key))) {
-            observation.params.color = this.observationColorByData.colors[observation.data[this.observationColorByData.key]]
+          if (this.observationFilters && (observation.data.hasOwnProperty(this.observationFilters.key))) {
+            observation.params.color = this.observationFilters.colors[observation.data[this.observationFilters.key]]
           } else {
-            observation.data[this.observationColorByData.key] = null
+            observation.data[this.observationFilters.key] = null
           }
 
           filteredObservationsList.push(observation)
@@ -242,9 +242,9 @@ export default {
     },
   },
   async beforeMount() {
-    await (this.observationColorByData.colors.null = this.observationDefaultColor)
+    await (this.observationFilters.colors.null = this.observationFilters)
 
-    for (let key in this.observationColorByData.colors) {
+    for (let key in this.observationFilters.colors) {
       this.observationsStatus[key] = true
     }
 
