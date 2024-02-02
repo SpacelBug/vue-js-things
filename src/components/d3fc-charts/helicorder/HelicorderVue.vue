@@ -23,7 +23,7 @@
              :style="`height: ${observation.params.height}px;
              top: ${observation.params.top}px;
              z-index: ${observation.params.zIndex};`">
-        <polygon class="observation"
+        <polygon :class="['observation', {'unsaved-observation': !observation.isSaved}]"
              :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
              :style="`fill: ${observation.params.color};`"
              @click="$emit('observationClick', observation.data, index, observation.isSaved)"
@@ -242,6 +242,7 @@ export default {
           if (this.observationFilters && (observation.data.hasOwnProperty(this.observationFilters.key))) {
             if (this.selectedObservationIndexes.has(index)) {
               observation.params.color = 'rgba(100,168,52,0.74)'
+              observation.isSelected = true
             } else {
               observation.params.color = this.observationFilters.colors[observation.data[this.observationFilters.key]]
             }
@@ -531,6 +532,10 @@ export default {
   position: absolute;
   width: 100%;
   fill: v-bind(observationDefaultColor);
+}
+.unsaved-observation{
+  stroke-width: 2px;
+  stroke: #ad1010;
 }
 .observation:after{
   content: '';
