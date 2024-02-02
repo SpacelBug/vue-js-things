@@ -32,8 +32,8 @@
         <polygon class="observation"
              :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
              :style="`fill: ${observation.params.color};`"
-             @click="$emit('observationClick', observation.data, index)"
-             @contextmenu="$emit('observationContext', observation.data, index)"
+             @click="$emit('observationClick', observation.data, index, observation.isSaved)"
+             @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
              @mouseenter="$emit('observationEnter', observation.data)"
              @mouseleave="$emit('observationLeave', observation.data)"/>
         </svg>
