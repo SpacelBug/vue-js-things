@@ -9,7 +9,7 @@
 
     <div class="observations-filters" v-if="observationFilters">
       <template v-for="(color, key) in observationFilters.colors">
-        <helicorder-filter :background-color="color" :caption="key" v-model="observationsStatus[key]"/>
+        <helicorder-filter :background-color="String(color)" :caption="key" v-model="observationsStatus[key]"/>
       </template>
     </div>
 
