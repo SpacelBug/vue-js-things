@@ -373,30 +373,35 @@ export default {
               }
             }))
             .on('mousedown', (()=>{
-              this.cursorStartLineIndex = index
-              this.cursorIsStretching = true
-              this.cursorStartPosX = d3.pointer(event)[0]
-              this.cursorStartPosY = index * this.lineHeight
-              this.observationPointerEvents = 'none'
+              if (event.which === 1) {
+                this.cursorStartLineIndex = index
+                this.cursorIsStretching = true
+                this.cursorStartPosX = d3.pointer(event)[0]
+                this.cursorStartPosY = index * this.lineHeight
+                this.observationPointerEvents = 'none'
+              }
             }))
             .on('mouseup', (()=>{
-              if (this.cursorStartPosX !== null) {
-                this.cursorIsStretching = false
+              if (event.which === 1) {
                 this.cursorEndPosX = d3.pointer(event)[0]
 
-                let startSeconds = ((xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.helicorderData.samplingRate))
-                let endSeconds = ((xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.helicorderData.samplingRate))
+                if ((this.cursorStartPosX) !== null && (this.cursorStartPosX !== this.cursorEndPosX)) {
 
-                let data = {}
+                  let startSeconds = ((xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.helicorderData.samplingRate))
+                  let endSeconds = ((xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.helicorderData.samplingRate))
 
-                data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
-                data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
+                  let data = {}
 
-                let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
-                let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
+                  data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
+                  data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
 
-                this.$emit('createObservation', data, d3.max(this.helicorderData.data.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                  let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
+                  let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
 
+                  this.$emit('createObservation', data, d3.max(this.helicorderData.data.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                }
+
+                this.cursorIsStretching = false
                 this.observationPointerEvents = 'all'
                 this.cursorStartPosX = null
               }
