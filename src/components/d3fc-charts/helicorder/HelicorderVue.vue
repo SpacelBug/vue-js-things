@@ -73,9 +73,11 @@ export default {
     HelicorderFilter,
   },
   props: {
-    helicorderData: Array,
-    maxData: Number,
-    samplingRate: Number,
+    helicorderData: {
+      data: Array,
+      max: Number,
+      samplingRate: Number,
+    },
     minutesInARow: Number,
     startDateTime: new Date(),
 
@@ -133,7 +135,7 @@ export default {
   computed: {
     endDateTime() {
       let endDateTime = new Date(this.startDateTime)
-      let secondsInEndPoint = Math.round((1 / this.samplingRate) * this.helicorderData.length)
+      let secondsInEndPoint = Math.round((1 / this.helicorderData.samplingRate) * this.helicorderData.data.length)
       endDateTime.setSeconds(endDateTime.getSeconds() + secondsInEndPoint)
       return endDateTime
     },
@@ -151,7 +153,7 @@ export default {
       /***
        * Количество точек в одной полосе
        */
-      return this.minutesInARow * 60 * this.samplingRate
+      return this.minutesInARow * 60 * this.helicorderData.samplingRate
     },
     slicedIndexes() {
       /***
@@ -162,13 +164,13 @@ export default {
       let startIndex = 0
       let endIndex = 0
 
-      for (let index of [...Array(Math.floor(this.helicorderData.length / this.sliceRange)).keys()]) {
+      for (let index of [...Array(Math.floor(this.helicorderData.data.length / this.sliceRange)).keys()]) {
         endIndex += this.sliceRange
         listOfIndexes.push([startIndex, endIndex])
         startIndex = endIndex
       }
-      if ((this.helicorderData.length % this.sliceRange) !== 0) {
-        listOfIndexes.push([startIndex, this.helicorderData.length])
+      if ((this.helicorderData.data.length % this.sliceRange) !== 0) {
+        listOfIndexes.push([startIndex, this.helicorderData.data.length])
       }
 
       return listOfIndexes
@@ -203,8 +205,8 @@ export default {
             (observation.data[this.startDateTimeKey].getTime() < this.endDateTime.getTime()) &&
             (observation.data[this.endDateTimeKey].getTime() < this.endDateTime.getTime())
         ) {
-          let startIndexGlobal =  ((observation.data[this.startDateTimeKey].getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
-          let endIndexGlobal = ((observation.data[this.endDateTimeKey].getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.samplingRate)
+          let startIndexGlobal =  ((observation.data[this.startDateTimeKey].getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.helicorderData.samplingRate)
+          let endIndexGlobal = ((observation.data[this.endDateTimeKey].getTime() - this.startDateTime.getTime()) / 1000) / (1 / this.helicorderData.samplingRate)
 
           let startLine = Math.floor(startIndexGlobal / this.sliceRange)
           let endLine = Math.floor(endIndexGlobal / this.sliceRange)
@@ -217,10 +219,10 @@ export default {
 
           let xScaleStart = d3.scaleLinear()
             .domain([0, this.sliceRange])
-            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / this.sliceRange)])
+            .range([0, this.width / ((this.minutesInARow * 60 * this.helicorderData.samplingRate) / this.sliceRange)])
           let xScaleEnd = d3.scaleLinear()
             .domain([0, this.sliceRange])
-            .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) / this.sliceRange)])
+            .range([0, this.width / ((this.minutesInARow * 60 * this.helicorderData.samplingRate) / this.sliceRange)])
 
           observation.params.leftStart = xScaleStart(startIndexLine)
           observation.params.leftEnd = xScaleEnd(endIndexLine)
@@ -317,7 +319,7 @@ export default {
 
       let promises = [...Array(this.slicedIndexes.length).keys()].map(async (index)=>{
 
-        let data = this.helicorderData.slice(this.slicedIndexes[index][0], this.slicedIndexes[index][1])
+        let data = this.helicorderData.data.slice(this.slicedIndexes[index][0], this.slicedIndexes[index][1])
 
         setTimeout(async ()=> {
           await this.drawCanvasLine(data, index)
@@ -333,16 +335,16 @@ export default {
 
       let xScale = d3.scaleLinear()
           .domain([0, data.length])
-          .range([0, this.width / ((this.minutesInARow * 60 * this.samplingRate) /data.length)])
+          .range([0, this.width / ((this.minutesInARow * 60 * this.helicorderData.samplingRate) /data.length)])
       let yScale = d3.scaleLinear()
-          .domain([-this.maxData, this.maxData])
+          .domain([-this.helicorderData.max, this.helicorderData.max])
           .range([0, this.lineHeight * this.gain])
 
       let canvas = d3.select(this.$refs["canvas-box"])
           .append('div')
             .attr('style', `height: ${this.lineHeight}px; width: ${this.width}px;`)
             .on('mousemove', (()=>{
-              this.secondInCursor = (Math.round(xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.samplingRate)
+              this.secondInCursor = (Math.round(xScale.invert(d3.pointer(event)[0])) + ((index) * this.sliceRange)) * (1 / this.helicorderData.samplingRate)
 
               this.cursorPosX = d3.pointer(event)[0]
               this.cursorPosY = this.lineHeight * index
@@ -365,8 +367,8 @@ export default {
                 this.cursorIsStretching = false
                 this.cursorEndPosX = d3.pointer(event)[0]
 
-                let startSeconds = ((xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.samplingRate))
-                let endSeconds = ((xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.samplingRate))
+                let startSeconds = ((xScale.invert(this.cursorStartPosX) + (this.cursorStartLineIndex * this.sliceRange)) * (1 / this.helicorderData.samplingRate))
+                let endSeconds = ((xScale.invert(this.cursorEndPosX) + (index * this.sliceRange)) * (1 / this.helicorderData.samplingRate))
 
                 let data = {}
 
@@ -376,7 +378,7 @@ export default {
                 let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
                 let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
 
-                this.$emit('createObservation', data, d3.max(this.helicorderData.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                this.$emit('createObservation', data, d3.max(this.helicorderData.data.slice(startGlobalDataIndex, endGlobalDataIndex)))
 
                 this.observationPointerEvents = 'all'
                 this.cursorStartPosX = null

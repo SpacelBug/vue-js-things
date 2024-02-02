@@ -124,15 +124,12 @@
     <div class="chart-example-container" ref="HelicorderVueCanvas">
       <div class="chart-example-container-chart" v-if="selectedChart === $refs.HelicorderVueCanvas">
         <helicorder-vue
-            :helicorder-data="helicorderData"
-            :max-data="1"
+            :helicorder-data="{data: helicorderData, max: 1, samplingRate: 200}"
             :loaded-observation="helicorderLoadedObservation"
             :observation-filters="{key: 'type', colors: {'I': '#58a95f', 'II': '#a9a558'}}"
             :minutes-in-a-row="5"
-            :sampling-rate="200"
             :start-date-time="new Date()"
             :width = "1600"
-            :type="'canvas'"
             :chart-caption="'HelicorderVue (canvas)'"
             @createObservation="createObservation"
             @observationClick="testObservationClick"/>
