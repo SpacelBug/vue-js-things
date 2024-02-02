@@ -4,7 +4,6 @@
       <div class="graph-gain">
         X: <input type="number" v-model="gain" @change="plot()">
       </div>
-      <div class="graph-caption">{{graphCaption}}</div>
     </div>
 
     <div class="observations-filters" v-if="observationFilters">
@@ -46,6 +45,7 @@
     </div>
 
     <div class="graph-side-panel">
+      <div class="graph-caption">{{graphCaption}}</div>
       <div class="time-labels">
         <div class="time-label" v-for="(_, index) in slicedIndexes">
           <template v-if="timeLabelByLineIndex(index)">
@@ -77,9 +77,9 @@ export default {
       data: Array,
       max: Number,
       samplingRate: Number,
-      station: {type: String, default: null},
-      network: {type: String, default: null},
-      location: {type: String, default: null},
+      station: String,
+      network: String,
+      location: String,
     },
     minutesInARow: Number,
     startDateTime: new Date(),
@@ -97,7 +97,6 @@ export default {
 
     width: {type: Number, default: 400},
     height: {type: Number, default: 500},
-    graphCaption: {type: String, default: 'Helicorder'},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
   emits: ['createObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext'],
@@ -141,6 +140,13 @@ export default {
       let secondsInEndPoint = Math.round((1 / this.helicorderData.samplingRate) * this.helicorderData.data.length)
       endDateTime.setSeconds(endDateTime.getSeconds() + secondsInEndPoint)
       return endDateTime
+    },
+    graphCaption() {
+      return `
+      ${this.helicorderData.station ? this.helicorderData.station : ''}
+      ${this.helicorderData.channel ? this.helicorderData.channel : ''}
+      ${this.helicorderData.locale ? this.helicorderData.locale : ''}
+      `
     },
     cursorDateTime() {
       /***
@@ -445,12 +451,22 @@ export default {
   grid-area: header;
 }
 .graph-side-panel{
+  display: grid;
+  align-items: center;
+  grid-template: "graph-caption time-labels" / 20px auto;
   grid-area: side-panel;
+}
+.graph-caption{
+  white-space: nowrap;
+  rotate: -90deg;
+  grid-area: graph-caption;
+  height: fit-content;
 }
 .time-labels{
   display: flex;
   flex-direction: column;
   height: 100%;
+  grid-area: time-labels;
 }
 .time-label{
   display: flex;
