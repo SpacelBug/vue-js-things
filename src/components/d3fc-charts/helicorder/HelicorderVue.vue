@@ -259,7 +259,7 @@ export default {
     },
   },
   async beforeMount() {
-    await (this.observationFilters.colors.null = this.observationFilters)
+    await (this.observationFilters.colors.null = this.observationDefaultColor)
 
     for (let key in this.observationFilters.colors) {
       this.observationsStatus[key] = true
