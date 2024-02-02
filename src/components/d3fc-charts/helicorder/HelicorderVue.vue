@@ -88,7 +88,7 @@ export default {
 
     unsavedObservations: {type: Array, default: []},
     savedObservations: {type: Array, default: []},
-    selectedObservationIndexes: [],
+    selectedObservationIndexes: {type: Set, default: new Set()},
     observationDefaultColor: {type: String, default: 'rgba(80,80,80,0.5)'},
     observationFilters: {key: String, colors: {}},
     observationOpacity: {type: String, default: '0.7'},
