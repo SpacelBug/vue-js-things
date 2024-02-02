@@ -20,6 +20,7 @@
 
       <template v-for="(observation, index) in processLoadedObservation">
         <svg class="observation-svg"
+             v-if="observationsStatus[observation.data[observationFilters.key]]"
              :style="`height: ${observation.params.height}px;
              top: ${observation.params.top}px;
              z-index: ${observation.params.zIndex};`">
