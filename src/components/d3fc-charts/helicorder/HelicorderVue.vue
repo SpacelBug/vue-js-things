@@ -83,7 +83,8 @@ export default {
 
     cursorColor: {type: String, default: 'rgba(80,80,80,0.5)'},
 
-    loadedObservation: {type: Array, default: []},
+    unsavedObservations: {type: Array, default: []},
+    savedObservations: {type: Array, default: []},
     selectedObservationIndexes: [],
     observationDefaultColor: {type: String, default: 'rgba(80,80,80,0.5)'},
     observationFilters: {key: String, colors: {}},
@@ -193,11 +194,14 @@ export default {
        * (пока тестовый)
        */
 
-      let listOfObservations = this.loadedObservation.map((data)=>{return {data, params: {}}})
+      let listOfObservations = [
+          ...this.unsavedObservations.map((data)=>{return {data, params: {}, isSaved: false}}),
+          ...this.savedObservations.map((data)=>{return {data, params: {}, isSaved: true}})
+      ]
 
       let filteredObservationsList = []
 
-      let counter = this.loadedObservation.length
+      let counter = this.unsavedObservations.length
       for (let observation of listOfObservations) {
         if (
             (observation.data[this.startDateTimeKey].getTime() > this.startDateTime.getTime()) &&
