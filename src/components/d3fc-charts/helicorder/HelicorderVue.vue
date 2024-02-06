@@ -165,9 +165,10 @@ export default {
     },
     graphCaption() {
       return `
-      ${this.helicorderData.station ? this.helicorderData.station : ''}
-      ${this.helicorderData.channel ? this.helicorderData.channel : ''}
-      ${this.helicorderData.locale ? this.helicorderData.locale : ''}
+      ${this.helicorderData.network ? this.helicorderData.network : '--'}.
+      ${this.helicorderData.station ? this.helicorderData.station : '--'}.
+      ${this.helicorderData.location ? this.helicorderData.location : '--'}.
+      ${this.helicorderData.channel ? this.helicorderData.channel : '--'}
       `
     },
     cursorDateTime() {
