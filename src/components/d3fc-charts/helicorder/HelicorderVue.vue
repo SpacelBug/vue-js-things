@@ -1,7 +1,6 @@
 <template>
   <div class="main-container">
     <div class="observations-filters" v-if="observationFilters">
-      {{observationsStatus}}
       <template v-for="(color, key) in observationFilters.colors">
         <helicorder-filter :background-color="String(color)" :caption="key" v-model="observationsStatus[key]"/>
       </template>
