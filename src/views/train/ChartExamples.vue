@@ -127,6 +127,7 @@
             :helicorder-data="{data: helicorderData, max: 1, samplingRate: 200}"
             :unsaved-observations="helicorderLoadedObservation"
             :observation-filters="{key: 'type', colors: {'I': '#58a95f', 'II': '#a9a558'}}"
+            :observation-extra-filters="{'isWeak':  {name: 'Слабые'}}"
             :minutes-in-a-row="5"
             :start-date-time="new Date()"
             :width = "1600"

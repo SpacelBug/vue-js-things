@@ -1,8 +1,12 @@
 <template>
   <div class="main-container">
     <div class="observations-filters" v-if="observationFilters">
+      {{observationsStatus}}
       <template v-for="(color, key) in observationFilters.colors">
         <helicorder-filter :background-color="String(color)" :caption="key" v-model="observationsStatus[key]"/>
+      </template>
+      <template v-for="(values, key) in observationExtraFilters">
+        <helicorder-filter :caption="values.name" v-model="observationsStatus[key]"/>
       </template>
     </div>
 
@@ -19,19 +23,38 @@
       <div v-else class="cursor" ref="cursor"></div>
 
       <template v-for="(observation, index) in processLoadedObservation">
-        <svg class="observation-svg"
-             v-if="observationsStatus[observation.data[observationFilters.key]]"
-             :style="`height: ${observation.params.height}px;
-             top: ${observation.params.top}px;
-             z-index: ${observation.params.zIndex};`">
-        <polygon :class="['observation', {'unsaved-observation': !observation.isSaved}]"
-             :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
-             :style="`fill: ${observation.params.color};`"
-             @click="$emit('observationClick', observation.data, index, observation.isSaved)"
-             @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
-             @mouseenter="$emit('observationEnter', observation.data)"
-             @mouseleave="$emit('observationLeave', observation.data)"/>
-        </svg>
+        <template v-for="(values, key) in observationExtraFilters">
+          <template v-if="observationsStatus[key]">
+            <svg class="observation-svg"
+                 v-if="observationsStatus[observation.data[observationFilters.key]]"
+                 :style="`height: ${observation.params.height}px;
+                 top: ${observation.params.top}px;
+                 z-index: ${observation.params.zIndex};`">
+            <polygon :class="['observation', {'unsaved-observation': !observation.isSaved}]"
+                 :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
+                 :style="`fill: ${observation.params.color};`"
+                 @click="$emit('observationClick', observation.data, index, observation.isSaved)"
+                 @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
+                 @mouseenter="$emit('observationEnter', observation.data)"
+                 @mouseleave="$emit('observationLeave', observation.data)"/>
+            </svg>
+          </template>
+          <template v-else>
+            <svg class="observation-svg"
+                 v-if="observationsStatus[observation.data[observationFilters.key]] && (observation.data[key] === false)"
+                 :style="`height: ${observation.params.height}px;
+                 top: ${observation.params.top}px;
+                 z-index: ${observation.params.zIndex};`">
+            <polygon :class="['observation', {'unsaved-observation': !observation.isSaved}]"
+                 :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
+                 :style="`fill: ${observation.params.color};`"
+                 @click="$emit('observationClick', observation.data, index, observation.isSaved)"
+                 @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
+                 @mouseenter="$emit('observationEnter', observation.data)"
+                 @mouseleave="$emit('observationLeave', observation.data)"/>
+            </svg>
+          </template>
+        </template>
       </template>
 
       <div class="vertical-lines">
@@ -89,6 +112,7 @@ export default {
     selectedObservationIndexes: {type: Set, default: new Set()},
     observationDefaultColor: {type: String, default: 'rgba(80,80,80,0.5)'},
     observationFilters: {key: String, colors: {}},
+    observationExtraFilters: {type: Object, default: []},
 
     startDateTimeKey: {type: String, default: 'startDateTime'},
     endDateTimeKey: {type: String, default: 'endDateTime'},
@@ -264,6 +288,10 @@ export default {
     await (this.observationFilters.colors.null = this.observationDefaultColor)
 
     for (let key in this.observationFilters.colors) {
+      this.observationsStatus[key] = true
+    }
+
+    for (let key in this.observationExtraFilters) {
       this.observationsStatus[key] = true
     }
 
