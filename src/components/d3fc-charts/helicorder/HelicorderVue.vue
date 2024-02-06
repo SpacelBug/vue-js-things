@@ -40,7 +40,8 @@
           </template>
           <template v-else>
             <svg class="observation-svg"
-                 v-if="observationsStatus[observation.data[observationFilters.key]] && (observation.data[key] === false)"
+                 v-if="observationsStatus[observation.data[observationFilters.key]] &&
+                 (!observation.data.hasOwnProperty(key) || observation.data[key] === false)"
                  :style="`height: ${observation.params.height}px;
                  top: ${observation.params.top}px;
                  z-index: ${observation.params.zIndex};`">
