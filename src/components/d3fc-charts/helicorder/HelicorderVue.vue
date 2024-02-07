@@ -423,6 +423,7 @@ export default {
 
                   data[this.startDateTimeKey] = this.getDateTimeBySeconds(startSeconds)
                   data[this.endDateTimeKey] = this.getDateTimeBySeconds(endSeconds)
+                  data.roootStation = this.helicorderData.station
 
                   let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
                   let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
