@@ -24,35 +24,40 @@
       <template v-for="(observation, index) in processLoadedObservation">
         <template v-for="(values, key) in observationExtraFilters">
           <template v-if="observationsStatus[key]">
-            <svg class="observation-svg"
-                 v-if="observationsStatus[observation.data[observationFilters.key]]"
-                 :style="`height: ${observation.params.height}px;
-                 top: ${observation.params.top}px;
-                 z-index: ${observation.params.zIndex};`">
-            <polygon :class="['observation', {'unsaved-observation': !observation.isSaved}]"
-                 :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
-                 :style="`fill: ${observation.params.color};`"
-                 @click="$emit('observationClick', observation.data, index, observation.isSaved)"
-                 @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
-                 @mouseenter="$emit('observationEnter', observation.data)"
-                 @mouseleave="$emit('observationLeave', observation.data)"/>
-            </svg>
+            <helicorder-observation v-if="observationsStatus[observation.data[observationFilters.key]]"
+                                    :style="`top: ${observation.params.top};
+                                    z-index: ${observation.params.zIndex};`"
+                                    :pointer-events="observationPointerEvents"
+                                    :line-height="lineHeight"
+                                    :width="width"
+                                    :height="observation.params.height"
+                                    :leftStart="observation.params.leftStart"
+                                    :leftEnd="observation.params.leftEnd"
+                                    :isSaved="observation.isSaved"
+                                    :color="observation.params.color"
+                                    :default-color="observationDefaultColor"
+                                    @click="$emit('observationClick', observation.data, index, observation.isSaved)"
+                                    @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
+                                    @mouseenter="$emit('observationEnter', observation.data)"
+                                    @mouseleave="$emit('observationLeave', observation.data)"/>
           </template>
           <template v-else>
-            <svg class="observation-svg"
-                 v-if="observationsStatus[observation.data[observationFilters.key]] &&
-                 (!observation.data.hasOwnProperty(key) || observation.data[key] === false)"
-                 :style="`height: ${observation.params.height}px;
-                 top: ${observation.params.top}px;
-                 z-index: ${observation.params.zIndex};`">
-            <polygon :class="['observation', {'unsaved-observation': !observation.isSaved}]"
-                 :points="observationPolygon(observation.params.height, observation.params.leftStart , observation.params.leftEnd)"
-                 :style="`fill: ${observation.params.color};`"
-                 @click="$emit('observationClick', observation.data, index, observation.isSaved)"
-                 @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
-                 @mouseenter="$emit('observationEnter', observation.data)"
-                 @mouseleave="$emit('observationLeave', observation.data)"/>
-            </svg>
+            <helicorder-observation v-if="observationsStatus[observation.data[observationFilters.key]] && (!observation.data.hasOwnProperty(key) || observation.data[key] === false)"
+                                    :style="`top: ${observation.params.top};
+                                    z-index: ${observation.params.zIndex};`"
+                                    :pointer-events="observationPointerEvents"
+                                    :line-height="lineHeight"
+                                    :width="width"
+                                    :height="observation.params.height"
+                                    :leftStart="observation.params.leftStart"
+                                    :leftEnd="observation.params.leftEnd"
+                                    :isSaved="observation.isSaved"
+                                    :color="observation.params.color"
+                                    :default-color="observationDefaultColor"
+                                    @click="$emit('observationClick', observation.data, index, observation.isSaved)"
+                                    @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
+                                    @mouseenter="$emit('observationEnter', observation.data)"
+                                    @mouseleave="$emit('observationLeave', observation.data)"/>
           </template>
         </template>
       </template>
@@ -87,11 +92,13 @@ import * as d3 from 'd3'
 import * as fc from 'd3fc'
 
 import HelicorderFilter from "./HelicorderFilter";
+import HelicorderObservation from "@/components/d3fc-charts/helicorder/HelicorderObservation";
 
 export default {
   name: "HelicorderVue",
   components: {
     HelicorderFilter,
+    HelicorderObservation,
   },
   props: {
     helicorderData: {
@@ -215,9 +222,23 @@ export default {
     },
     cursorForm() {
       /***
-       * Задает параметры для формы курсора с помощью метода observationPolygon()
+       * Задает параметры для формы курсора
        */
-      return this.observationPolygon(this.stretchingCursorHeight, this.cursorStartPosX, this.cursorPosX)
+       let polygon = [
+          `0 ${this.lineHeight}`,
+          `${this.cursorStartPosX} ${this.lineHeight}`,
+          `${this.cursorStartPosX} 0`,
+
+          `${this.width} 0`,
+
+          `${this.width} ${this.stretchingCursorHeight - this.lineHeight}`,
+          `${this.cursorPosX} ${this.stretchingCursorHeight - this.lineHeight}`,
+          `${this.cursorPosX} ${this.stretchingCursorHeight}`,
+
+          `0 ${this.stretchingCursorHeight}`,
+      ]
+
+      return polygon.join(',')
     },
     processLoadedObservation() {
       /***
@@ -320,42 +341,6 @@ export default {
       date.setSeconds(date.getSeconds() + seconds)
 
       return new Date(date)
-    },
-    observationPolygon(height, startPos, endPos) {
-      /***
-       * Возвращает строку определяющую форму маркера наблюдения для css свойства clip-path
-       */
-      let width = this.width
-
-      let polygon = []
-
-      if (height === this.lineHeight) {
-        polygon = [
-          `${startPos} 0`,
-
-          `${endPos} 0`,
-
-          `${endPos} ${height}`,
-
-          `${startPos} ${height}`,
-        ]
-      } else {
-        polygon = [
-          `0 ${this.lineHeight}`,
-          `${startPos} ${this.lineHeight}`,
-          `${startPos} 0`,
-
-          `${width} 0`,
-
-          `${width} ${height - this.lineHeight}`,
-          `${endPos} ${height - this.lineHeight}`,
-          `${endPos} ${height}`,
-
-          `0 ${height}`,
-        ]
-      }
-
-      return polygon.join(',')
     },
     async plot() {
 
@@ -555,33 +540,5 @@ export default {
   pointer-events: none;
   top: v-bind(cursorStartPosY + 'px');
   position: absolute;
-}
-.observation-svg{
-  pointer-events: none;
-  top: 0;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-.observation{
-  pointer-events: v-bind(observationPointerEvents);
-  position: absolute;
-  width: 100%;
-  fill: v-bind(observationDefaultColor);
-}
-.unsaved-observation{
-  stroke-width: 2px;
-  stroke: #ad1010;
-}
-.observation:after{
-  content: '';
-  position: absolute;
-  clip-path: inherit;
-  height: inherit;
-  width: 100%;
-}
-.observation:hover{
-  stroke: black;
-  stroke-width: 2px;
 }
 </style>
