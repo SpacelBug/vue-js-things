@@ -44,7 +44,7 @@ export default {
 
           `${this.leftStart} ${this.height}`,
         ])
-      } else if (this.leftEnd <= this.leftStart) {
+      } else if ((this.leftEnd <= this.leftStart) && (this.height === (this.lineHeight * 2))) {
         //two rects
         polygons.push([
           `${this.leftStart} 0`,
