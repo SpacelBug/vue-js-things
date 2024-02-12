@@ -36,8 +36,8 @@
                                     :isSaved="observation.isSaved"
                                     :color="observation.params.color"
                                     :default-color="observationDefaultColor"
-                                    @click="$emit('observationClick', observation.data, index, observation.isSaved)"
-                                    @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
+                                    @click="$emit('observationClick', observation.data, observation.index, observation.isSaved)"
+                                    @contextmenu="$emit('observationContext', observation.data, observation.index, observation.isSaved)"
                                     @mouseenter="$emit('observationEnter', observation.data)"
                                     @mouseleave="$emit('observationLeave', observation.data)"/>
           </template>
@@ -54,8 +54,8 @@
                                     :isSaved="observation.isSaved"
                                     :color="observation.params.color"
                                     :default-color="observationDefaultColor"
-                                    @click="$emit('observationClick', observation.data, index, observation.isSaved)"
-                                    @contextmenu="$emit('observationContext', observation.data, index, observation.isSaved)"
+                                    @click="$emit('observationClick', observation.data, observation.index, observation.isSaved)"
+                                    @contextmenu="$emit('observationContext', observation.data, observation.index, observation.isSaved)"
                                     @mouseenter="$emit('observationEnter', observation.data)"
                                     @mouseleave="$emit('observationLeave', observation.data)"/>
           </template>
@@ -256,6 +256,7 @@ export default {
       let index = 0
       let counter = listOfObservations.length
       for (let observation of listOfObservations) {
+        observation.index = index
         if (
             (observation.data[this.startDateTimeKey].getTime() > this.startDateTime.getTime()) &&
             (observation.data[this.endDateTimeKey].getTime() > this.startDateTime.getTime()) &&
@@ -299,8 +300,8 @@ export default {
 
           filteredObservationsList.push(observation)
           counter--
-          index++
         }
+        index++
       }
 
       return filteredObservationsList
