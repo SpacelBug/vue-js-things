@@ -391,6 +391,7 @@ export default {
               if (event.which === 1) {
                 this.cursorStartLineIndex = index
                 this.cursorIsStretching = true
+                this.stretchingCursorHeight = this.lineHeight
                 this.cursorStartPosX = d3.pointer(event)[0]
                 this.cursorStartPosY = index * this.lineHeight
                 this.observationPointerEvents = 'none'
