@@ -128,7 +128,7 @@ export default {
     height: {type: Number, default: 500},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
-  emits: ['createObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext'],
+  emits: ['createObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext', 'graphClick'],
   data() { return {
       linesInfo: {}, // scales для каждой линии
 
@@ -416,6 +416,8 @@ export default {
                   let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
 
                   this.$emit('createObservation', data, d3.max(this.helicorderData.data.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                } else {
+                  this.$emit('graphClick')
                 }
 
                 this.cursorIsStretching = false
