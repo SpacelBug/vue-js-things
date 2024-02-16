@@ -224,21 +224,11 @@ export default {
       /***
        * Задает параметры для формы курсора
        */
-       let polygon = [
-          `0 ${this.lineHeight}`,
-          `${this.cursorStartPosX} ${this.lineHeight}`,
-          `${this.cursorStartPosX} 0`,
-
-          `${this.width} 0`,
-
-          `${this.width} ${this.stretchingCursorHeight - this.lineHeight}`,
-          `${this.cursorPosX} ${this.stretchingCursorHeight - this.lineHeight}`,
-          `${this.cursorPosX} ${this.stretchingCursorHeight}`,
-
-          `0 ${this.stretchingCursorHeight}`,
-      ]
-
-      return polygon.join(',')
+      if (this.cursorStartPosX > this.cursorPosX) {
+        return this.observationPolygon(this.stretchingCursorHeight, this.cursorStartPosX, this.cursorStartPosX)
+      } else {
+        return this.observationPolygon(this.stretchingCursorHeight, this.cursorStartPosX, this.cursorPosX)
+      }
     },
     processLoadedObservation() {
       /***
@@ -342,6 +332,42 @@ export default {
       date.setSeconds(date.getSeconds() + seconds)
 
       return new Date(date)
+    },
+    observationPolygon(height, startPos, endPos) {
+      /***
+       * Возвращает строку определяющую форму маркера наблюдения для css свойства clip-path
+       */
+      let width = this.width
+
+      let polygon = []
+
+      if (height === this.lineHeight) {
+        polygon = [
+          `${startPos} 0`,
+
+          `${endPos} 0`,
+
+          `${endPos} ${height}`,
+
+          `${startPos} ${height}`,
+        ]
+      } else {
+        polygon = [
+          `0 ${this.lineHeight}`,
+          `${startPos} ${this.lineHeight}`,
+          `${startPos} 0`,
+
+          `${width} 0`,
+
+          `${width} ${height - this.lineHeight}`,
+          `${endPos} ${height - this.lineHeight}`,
+          `${endPos} ${height}`,
+
+          `0 ${height}`,
+        ]
+      }
+
+      return polygon.join(',')
     },
     async plot() {
 
