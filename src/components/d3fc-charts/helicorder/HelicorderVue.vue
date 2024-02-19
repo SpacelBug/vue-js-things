@@ -445,7 +445,9 @@ export default {
                   let startGlobalDataIndex = Math.round((this.cursorStartLineIndex * this.sliceRange) + xScale.invert(this.cursorStartPosX))
                   let endGlobalDataIndex = Math.round((index * this.sliceRange) + xScale.invert(this.cursorEndPosX))
 
-                  this.$emit('createObservation', data, d3.max(this.helicorderData.data.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                  if (new Date(data[this.endDateTimeKey]).getTime() < this.endDateTime.getTime()) {
+                    this.$emit('createObservation', data, d3.max(this.helicorderData.data.slice(startGlobalDataIndex, endGlobalDataIndex)))
+                  }
                 } else {
                   this.$emit('graphClick')
                 }
