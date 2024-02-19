@@ -11,8 +11,8 @@
 
     <div class="graph-container"
          ref="target"
-         @mouseenter="$refs.cursor.style.visibility = 'visible'"
-         @mouseleave="$refs.cursor.style.visibility = 'hidden'">
+         @mouseenter="$refs.cursor.style.visibility = 'visible';"
+         @mouseleave="stopObservationSelecting">
       <div ref="canvas-box"
            class="canvas-container"/>
 
@@ -311,6 +311,10 @@ export default {
     await this.plot()
   },
   methods: {
+    async stopObservationSelecting() {
+      await (this.cursorIsStretching = false)
+      this.$refs.cursor.style.visibility = 'hidden'
+    },
     timeLabelByLineIndex(lineIndex) {
       let date = new Date(this.startDateTime)
       date.setSeconds(this.startDateTime.getSeconds() + (this.minutesInARow * 60) * lineIndex)
@@ -424,7 +428,7 @@ export default {
               }
             }))
             .on('mouseup', (()=>{
-              if (event.which === 1) {
+              if ((event.which === 1) && this.cursorIsStretching) {
                 this.cursorEndPosX = d3.pointer(event)[0]
 
                 if ((this.cursorStartPosX) !== null && (this.cursorStartPosX !== this.cursorEndPosX)) {
@@ -449,6 +453,8 @@ export default {
                 this.cursorIsStretching = false
                 this.observationPointerEvents = 'all'
                 this.cursorStartPosX = null
+              } else {
+                this.stopObservationSelecting()
               }
             }))
           .append('canvas')
