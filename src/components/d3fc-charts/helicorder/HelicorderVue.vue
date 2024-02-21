@@ -224,7 +224,7 @@ export default {
       /***
        * Задает параметры для формы курсора
        */
-      if (this.cursorStartPosX > this.cursorPosX) {
+      if ((this.cursorStartPosX > this.cursorPosX) && (this.stretchingCursorHeight <= this.lineHeight)) {
         return this.observationPolygon(this.stretchingCursorHeight, this.cursorStartPosX, this.cursorStartPosX)
       } else {
         return this.observationPolygon(this.stretchingCursorHeight, this.cursorStartPosX, this.cursorPosX)
