@@ -14,7 +14,8 @@
          @mouseenter="$refs.cursor.style.visibility = 'visible';"
          @mouseleave="stopObservationSelecting">
       <div ref="canvas-box"
-           class="canvas-container"/>
+           class="canvas-container"
+           @contextmenu="((e)=>{e.preventDefault()})"/>
 
       <svg v-if="cursorIsStretching" class="svg-cursor">
         <polygon :points="cursorForm" :style="`fill: ${observationDefaultColor};`"/>
