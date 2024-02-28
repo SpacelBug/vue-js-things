@@ -12,7 +12,8 @@
     <div class="graph-container"
          ref="target"
          @mouseenter="$refs.cursor.style.visibility = 'visible';"
-         @mouseleave="stopObservationSelecting">
+         @mouseleave="stopObservationSelecting"
+         @keydown="graphKeyDown">
       <div ref="canvas-box"
            class="canvas-container"
            @contextmenu="((e)=>{e.preventDefault()})"/>
@@ -316,6 +317,14 @@ export default {
       await (this.cursorIsStretching = false)
       this.observationPointerEvents = 'all'
       this.$refs.cursor.style.visibility = 'visible'
+    },
+    graphKeyDown() {
+      if ((event.key === 'z') && (event.ctrlKey)) {
+        this.$emit('graphUndo')
+      } else if ((event.key === 'a') && (event.ctrlKey)) {
+        event.preventDefault()
+        this.$emit('selectAll')
+      }
     },
     timeLabelByLineIndex(lineIndex) {
       let date = new Date(this.startDateTime)
