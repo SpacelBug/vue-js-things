@@ -314,7 +314,8 @@ export default {
   methods: {
     async stopObservationSelecting() {
       await (this.cursorIsStretching = false)
-      this.$refs.cursor.style.visibility = 'hidden'
+      this.observationPointerEvents = 'all'
+      this.$refs.cursor.style.visibility = 'visible'
     },
     timeLabelByLineIndex(lineIndex) {
       let date = new Date(this.startDateTime)
@@ -453,9 +454,7 @@ export default {
                   this.$emit('graphClick')
                 }
 
-                this.cursorIsStretching = false
-                this.observationPointerEvents = 'all'
-                this.cursorStartPosX = null
+                this.stopObservationSelecting()
               } else {
                 this.stopObservationSelecting()
               }
