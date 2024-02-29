@@ -130,7 +130,7 @@ export default {
     height: {type: Number, default: 500},
     graphStrokeColor: {type: String, default: '#5185b9'},
   },
-  emits: ['createObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext', 'graphClick'],
+  emits: ['createObservation', 'observationClick', 'observationEnter', 'observationLeave', 'observationContext', 'graphClick', 'graphUndo', 'selectAll'],
   data() { return {
       linesInfo: {}, // scales для каждой линии
 
