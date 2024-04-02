@@ -2,7 +2,7 @@
   <div class="animations-view-main-box">
 
   <div class="animation-box" ref="box">
-    <h3 class="animation-name">Right fade ({{this.$refs.box.clientHeight}})</h3>
+    <h3 class="animation-name">Right fade</h3>
     <div class="animation-example">
       <transition appear name="right-fade">
         <div v-if="isShowRightFade" class="square" ref="square"/>
