@@ -1,9 +1,8 @@
 <template id="app">
   <div class="header">
-    <h2>D3 js graphs</h2>
+    <h2>Vue JS V3 components</h2>
     <div class="pages">
-      <router-link to="graphs">Graphs</router-link>
-      <router-link to="examples">D3FC train</router-link>
+      <router-link to="graphs">D3FC graphs</router-link>
     </div>
   </div>
   <router-view></router-view>

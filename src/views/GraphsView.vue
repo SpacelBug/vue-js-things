@@ -1,35 +1,208 @@
 <template>
-  <div class="chart-container">
+  <div class="chart-selector">
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.LineChartSvg">LineChart SVG</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.LineChartCanvas">LineChart Canvas</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.LineChartWebGl">LineChart WebGL</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesSvg">TimeSeriesChart SVG</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesCanvas">TimeSeriesChart Canvas</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.TimeSeriesWebGl">TimeSeriesChart WebGL</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesSvg">MultiTimeSeries SVG</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesCanvas">MultiTimeSeries Canvas</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.MultiTimeSeriesWebGl">MultiTimeSeries WebGl</div>
+    <div :class="['chart-selector-button']" @click="selectedChart = $refs.HelicorderVueCanvas">Helicorder Canvas</div>
+  </div>
+  <div class="main-box">
+
+    <div class="chart-example-container" ref="LineChartSvg">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.LineChartSvg">
+        <line-chart
+            :chart-data="chartData"
+            :type="'svg'"
+            :chart-caption="'LineChart (svg)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="LineChartCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.LineChartCanvas">
+        <line-chart
+            :chart-data="chartData"
+            :type="'canvas'"
+            :chart-caption="'LineChart (canvas)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="LineChartWebGl">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.LineChartWebGl">
+        <line-chart
+            :chart-data="chartData"
+            :type="'webgl'"
+            :chart-caption="'LineChart (webgl)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="TimeSeriesSvg">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.TimeSeriesSvg">
+        <time-series-chart
+            :chart-data="timeChartData"
+            :type="'svg'"
+            :chart-caption="'TimeSeriesChart (svg)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="TimeSeriesCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.TimeSeriesCanvas">
+        <time-series-chart
+            :chart-data="timeChartData"
+            :type="'canvas'"
+            :chart-caption="'TimeSeriesChart (canvas)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="TimeSeriesWebGl">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.TimeSeriesWebGl">
+        <time-series-chart
+            :chart-data="timeChartData"
+            :type="'webgl'"
+            :chart-caption="'TimeSeriesChart (webgl)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="MultiTimeSeriesSvg">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesSvg">
+        <sliced-time-series
+            :chart-data="multiTimeChartData"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :type="'svg'"
+            :chart-caption="'MultiTimeSeriesChart (svg)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="MultiTimeSeriesCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesCanvas">
+        <sliced-time-series
+            :chart-data="multiTimeChartData"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :type="'canvas'"
+            :chart-caption="'MultiTimeSeriesChart (Canvas)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="MultiTimeSeriesWebGl">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.MultiTimeSeriesWebGl">
+        <sliced-time-series
+            :chart-data="multiTimeChartData"
+            :sampling-rate="200"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :type="'webgl'"
+            :chart-caption="'MultiTimeSeriesChart (webgl)'"
+            :show-plotting-time="true"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
+
+    <div class="chart-example-container" ref="HelicorderVueCanvas">
+      <div class="chart-example-container-chart" v-if="selectedChart === $refs.HelicorderVueCanvas">
+        <helicorder-vue
+            :helicorder-data="{data: helicorderData, max: 1, samplingRate: 200}"
+            :unsaved-observations="helicorderLoadedObservation"
+            :observation-filters="{key: 'type', colors: {'I': '#58a95f', 'II': '#a9a558'}}"
+            :observation-extra-filters="{'isWeak':  {name: 'Слабые'}}"
+            :minutes-in-a-row="5"
+            :start-date-time="new Date()"
+            :width = "1600"
+            :chart-caption="'HelicorderVue (canvas)'"
+            @createObservation="createObservation"
+            @observationClick="testObservationClick"/>
+      </div>
+      <div class="chart-example-container-code"></div>
+    </div>
   </div>
 </template>
 
 <script>
+import LineChart from "@/components/d3fc-charts/LineChart";
+import TimeSeriesChart from "@/components/d3fc-charts/TimeSeriesChart";
+import SlicedTimeSeries from "@/components/d3fc-charts/SlicedTimeSeries";
+import HelicorderVue from "@/components/d3fc-charts/helicorder/HelicorderVue";
 
 export default {
-  name: "Graphs",
+  name: "ChartExamples",
   components: {
+    LineChart,
+    TimeSeriesChart,
+    SlicedTimeSeries,
+    HelicorderVue
   },
-  data() { return {
-      linechartData: [
-        { date: '24-Apr-07', close: 60.241222 },
-        { date: '25-Apr-07', close: 75.35231313 },
-        { date: '26-Apr-07', close: 98.83134 },
-        { date: '27-Apr-07', close: 99.9335352 },
-        { date: '30-Apr-07', close: 85.8353530 },
-        { date: '1-May-07', close: 99.452357 },
-        { date: '2-May-07', close: 110.4352357 },
-        { date: '3-May-07', close: 80.47253 },
-        { date: '4-May-07', close: 99.4523537 },
-        { date: '5-May-07', close: 66.42357 },
-      ]
+  data () { return {
+      selectedChart: null,
+      chartData: Array.from({length: 1000000}, (_, i) => ({x: i, y: Math.random()})),
+      timeChartData: Array.from({length: 1000000}, (_, i) => (Math.random())),
+      multiTimeChartData: [
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+        Array.from({length: 24000 * 5}, (_, i) => (Math.random())),
+      ],
+
+      helicorderData: Array.from({length: 24000 * 5 * 12}, (_, i) => (Math.random())),
+      helicorderLoadedObservation: [],
+    }
+  },
+  mounted() {
+  },
+  methods: {
+    createObservation(data) {
+      this.helicorderLoadedObservation.push(data)
+    },
+    testObservationClick(data, index) {
+      console.log(data, index)
     }
   }
 }
 </script>
 
 <style scoped>
-.chart-container{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.chart-selector{
+  display: flex;
+  gap: 20px;
+  font-size: 16px;
+  padding: 24px;
+}
+.chart-selector-button{
+  cursor: pointer;
+}
+.main-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
