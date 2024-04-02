@@ -11,12 +11,24 @@
     <button @click="isShowRightFade = !isShowRightFade"> Hide/Show </button>
   </div>
 
+  <div class="animation-box">
+    <h3 class="animation-name">Cursor light up</h3>
+    <cursor-light-up>
+      Some text
+    </cursor-light-up>
+  </div>
+
   </div>
 </template>
 
 <script>
+import CursorLightUp from "@/views/animations/CursorLightUp";
+
 export default {
   name: "AnimationsView",
+  components: {
+    CursorLightUp: CursorLightUp
+  },
   data () { return {
     isShowRightFade: true
   }},
@@ -48,6 +60,9 @@ export default {
 }
 /***PageStyles***/
 .animations-view-main-box{
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
   padding: 32px;
 }
 .animation-box{
