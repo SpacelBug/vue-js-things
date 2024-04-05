@@ -4,6 +4,9 @@
       tabindex="0"
       @focusout="isShowOptions = false"
       @focusin="isShowOptions = true"
+      @keydown.up="onKeyDownUp"
+      @keydown.down="onKeyDownDown"
+      @keydown.enter="onKeyDownEnter"
   >
     <div class="select-button">
       <div v-if="modelValue" class="value">{{ modelValue }}</div>
@@ -14,10 +17,11 @@
       <div
           class="select-options"
           v-if="isShowOptions"
+          ref="options"
       >
         <div
-            v-for="option in options"
-            :class="['select-option', {'active': modelValue === option}]"
+            v-for="(option, index) in options"
+            :class="['select-option', {'active': modelValue === option, 'keyboard-selected': index === selectedOptionIndex}]"
             @click="select"
         >
           {{ option }}
@@ -42,12 +46,41 @@ export default {
     optionsBoxHeight: {type: Number, default: 280}
   },
   data() { return {
-    isShowOptions: false
+    isShowOptions: false,
+    selectedOptionIndex: null,
   }},
   methods: {
     select() {
       this.$el.blur()
       this.$emit('update:modelValue', event.target.innerText)
+    },
+    onKeyDownUp() {
+      if (this.selectedOptionIndex === null) {
+        this.selectedOptionIndex = 0
+      } else {
+        if (this.selectedOptionIndex !== 0) {
+          this.selectedOptionIndex--
+          document.querySelector('.keyboard-selected').scrollIntoView(
+              {behavior: "smooth", block: "end", inline: "nearest"}
+          )
+        }
+      }
+    },
+    onKeyDownDown() {
+      if (this.selectedOptionIndex === null) {
+        this.selectedOptionIndex = 0
+      } else {
+        if (this.selectedOptionIndex !== (this.options.length - 1)) {
+          this.selectedOptionIndex++
+          document.querySelector('.keyboard-selected').scrollIntoView(
+              {behavior: "smooth", block: "start", inline: "nearest"}
+          )
+        }
+      }
+    },
+    onKeyDownEnter() {
+      this.$el.blur()
+      this.$emit('update:modelValue', this.options[this.selectedOptionIndex])
     }
   }
 }
@@ -96,6 +129,10 @@ export default {
 }
 .active{
   background-color: v-bind(activeColor);
+}
+.keyboard-selected{
+  background-color: v-bind(activeColor);
+  opacity: 0.8;
 }
 /***Animations***/
 .options-enter-from{
