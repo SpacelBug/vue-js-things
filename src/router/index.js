@@ -5,6 +5,11 @@ const routes = [
     name: 'graphs',
     component: () => import('../views/GraphsView'),
     path: '/graphs'
+  },
+  {
+    name: 'components',
+    component: () => import('../views/ComponentsView'),
+    path: '/components'
   }
 ]
 
