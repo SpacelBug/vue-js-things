@@ -10,15 +10,17 @@
       <div v-else class="placeholder">{{ placeHolder }}</div>
       <div :class="['arrow-head-down-icon', {'arrow-head-down-icon-rotate': isShowOptions}]"/>
     </div>
-    <div class="options" v-if="isShowOptions">
-      <div
-          v-for="(option, index) in options"
-          :class="['option', {'active': selectedOptionsIndexes.has(Number(index))}]"
-          @click="onOptionClick(index)"
-      >
-        {{ option }}
+    <transition name="options" appear>
+      <div class="options" v-if="isShowOptions">
+        <div
+            v-for="(option, index) in options"
+            :class="['option', {'active': selectedOptionsIndexes.has(Number(index))}]"
+            @click="onOptionClick(index)"
+        >
+          {{ option }}
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -112,6 +114,27 @@ export default {
   width: 8px;
   border-radius: 8px;
   background-color: v-bind(activeColor);
+}
+/***Animations***/
+.options-enter-from{
+  max-height: 0;
+}
+.options-enter-active{
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.options-enter-to{
+  max-height: v-bind(optionsBoxHeight + 'px');
+}
+.options-leave-from{
+  max-height: v-bind(optionsBoxHeight + 'px');
+}
+.options-leave-active{
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.options-leave-to{
+  max-height: 0;
 }
 /***Icons***/
 .arrow-head-down-icon{
