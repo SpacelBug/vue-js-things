@@ -108,6 +108,7 @@ export default {
 /***OptionsClasses***/
 .select-options{
   position: absolute;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
