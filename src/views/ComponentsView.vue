@@ -55,18 +55,44 @@
       </div>
     </div>
 
+    <div class="component-box">
+      <div class="component-box-component">
+        <h3>MultiSelect</h3>
+        <date-input style="color: black"/>
+      </div>
+      <div class="component-box-description">
+        Компонент выбора даты
+        <pre>
+          props:
+            required:
+              modelValue - отвечает за v-model (Date)
+            optional:
+              mainColor - главный цвет (String)
+              backgroundColor - цвет фона (String)
+              additionalColor - дополнительный цвет (String)
+              activeColor - цвет активных элементов (String)
+
+              inputType - может принимать значения date, datetime и time (String)
+              accuracy - точность даты. принимает значения [year, month, day, hour, min, sec] (String)
+              isShowInputsPanel - логическая переменная отвечающая за отображения панели ввода даты с клавиатуры (Boolean)
+        </pre>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 import VueSelect from "@/components/basic/select/VueSelect";
 import MultiSelect from "@/components/basic/multi-select/MultiSelect";
+import DateInput from "@/components/basic/calendar/DateInput";
 
 export default {
   name: "ComponentsView",
   components: {
     VueSelect,
     MultiSelect,
+    DateInput,
   },
   data() { return {
     testValueSelect: null,
