@@ -1,7 +1,16 @@
 <template>
+
+  <div class="components-list">
+    <div class="component-name" @click="showingComponentName = 'Select'">Select</div>
+    <div class="component-name" @click="showingComponentName = 'MultiSelect'">MultiSelect</div>
+    <div class="component-name" @click="showingComponentName = 'DatetimeInput'">DatetimeInput</div>
+    <div class="component-name" @click="showingComponentName = 'MultiUploader'">MultiUploader</div>
+    <div class="component-name" @click="showingComponentName = 'Uploader'">Uploader</div>
+  </div>
+
   <div class="main-box">
 
-    <div class="component-box">
+    <div class="component-box" v-if="showingComponentName === 'Select'">
       <div class="component-box-component">
         <h3>Select</h3>
         <vue-select
@@ -28,7 +37,7 @@
       </div>
     </div>
 
-    <div class="component-box">
+    <div class="component-box" v-if="showingComponentName === 'MultiSelect'">
       <div class="component-box-component">
         <h3>MultiSelect</h3>
         <multi-select
@@ -55,9 +64,9 @@
       </div>
     </div>
 
-    <div class="component-box">
+    <div class="component-box" v-if="showingComponentName === 'DatetimeInput'">
       <div class="component-box-component">
-        <h3>MultiSelect</h3>
+        <h3>Datetime input</h3>
         <date-input style="color: black"/>
       </div>
       <div class="component-box-description">
@@ -79,7 +88,7 @@
       </div>
     </div>
 
-    <div class="component-box">
+    <div class="component-box" v-if="showingComponentName === 'MultiUploader'">
       <div class="component-box-component">
         <h3>MultiUploader</h3>
         <multi-uploader style="color: black" :type="'images'"/>
@@ -98,7 +107,7 @@
       </div>
     </div>
 
-    <div class="component-box">
+    <div class="component-box" v-if="showingComponentName === 'Uploader'">
       <div class="component-box-component">
         <h3>Uploader</h3>
         <vue-uploader style="color: white;"/>
@@ -128,11 +137,23 @@ export default {
     testValueSelect: null,
     options: [...Array(25).keys().map((index)=>{return `Some value ${index}`})],
     testValueMultiSelect: null,
+    showingComponentName: null,
   }}
 }
 </script>
 
 <style scoped>
+.components-list{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 32px;
+}
+.component-name{
+  user-select: none;
+  cursor: pointer;
+}
 .main-box{
   padding: 32px;
 }
