@@ -107,11 +107,11 @@
 </template>
 
 <script>
-import YearChooser from "@/components/basic/calendar/YearChooser";
-import MonthChooser from "@/components/basic/calendar/MonthChooser";
-import DayChooser from "@/components/basic/calendar/DayChooser";
-import TimeChooser from "@/components/basic/calendar/TimeChooser";
-import InputsPanel from "@/components/basic/calendar/InputsPanel";
+import YearChooser from "@/components/basic/datetime-input/YearChooser";
+import MonthChooser from "@/components/basic/datetime-input/MonthChooser";
+import DayChooser from "@/components/basic/datetime-input/DayChooser";
+import TimeChooser from "@/components/basic/datetime-input/TimeChooser";
+import InputsPanel from "@/components/basic/datetime-input/InputsPanel";
 
 export default {
   name: "CustomCalendar",

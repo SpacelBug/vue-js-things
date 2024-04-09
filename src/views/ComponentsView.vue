@@ -111,7 +111,7 @@
 <script>
 import VueSelect from "@/components/basic/select/VueSelect";
 import MultiSelect from "@/components/basic/multi-select/MultiSelect";
-import DateInput from "@/components/basic/calendar/DateInput";
+import DateInput from "@/components/basic/datetime-input/DateInput";
 import MultiUploader from "@/components/basic/multi-uploader/MultiUploader";
 import VueUploader from "@/components/basic/uploader/VueUploader";
 
