@@ -101,7 +101,7 @@
     <div class="component-box">
       <div class="component-box-component">
         <h3>Uploader</h3>
-        <vue-uploader style="color: black" :type="'images'"/>
+        <vue-uploader style="color: white;"/>
       </div>
     </div>
 
