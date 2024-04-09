@@ -98,6 +98,13 @@
       </div>
     </div>
 
+    <div class="component-box">
+      <div class="component-box-component">
+        <h3>Uploader</h3>
+        <vue-uploader style="color: black" :type="'images'"/>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -106,6 +113,7 @@ import VueSelect from "@/components/basic/select/VueSelect";
 import MultiSelect from "@/components/basic/multi-select/MultiSelect";
 import DateInput from "@/components/basic/calendar/DateInput";
 import MultiUploader from "@/components/basic/multi-uploader/MultiUploader";
+import VueUploader from "@/components/basic/uploader/VueUploader";
 
 export default {
   name: "ComponentsView",
@@ -114,6 +122,7 @@ export default {
     MultiSelect,
     DateInput,
     MultiUploader,
+    VueUploader,
   },
   data() { return {
     testValueSelect: null,
