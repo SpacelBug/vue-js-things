@@ -79,6 +79,25 @@
       </div>
     </div>
 
+    <div class="component-box">
+      <div class="component-box-component">
+        <h3>MultiUploader</h3>
+        <multi-uploader style="color: black" :type="'images'"/>
+      </div>
+      <div class="component-box-description">
+        Компонент загрузки файлов
+        <pre>
+          props:
+            important:
+              type - строка определяющая тип файлов. Может принимать значения images, files (String)
+            optional:
+              border -
+              backgroundColor -
+              additionalColor -
+        </pre>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -86,6 +105,7 @@
 import VueSelect from "@/components/basic/select/VueSelect";
 import MultiSelect from "@/components/basic/multi-select/MultiSelect";
 import DateInput from "@/components/basic/calendar/DateInput";
+import MultiUploader from "@/components/basic/multi-uploader/MultiUploader";
 
 export default {
   name: "ComponentsView",
@@ -93,6 +113,7 @@ export default {
     VueSelect,
     MultiSelect,
     DateInput,
+    MultiUploader,
   },
   data() { return {
     testValueSelect: null,
