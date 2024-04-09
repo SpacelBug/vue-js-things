@@ -24,7 +24,7 @@
 <script>
 export default {
   name: "VueUploader",
-  emits: ['inputFile'],
+  emits: ['inputFile', 'cancelFile'],
   props: {
     backgroundColor: {type: String, default: 'grey'},
     textColor: {type: String, default: 'white'},
