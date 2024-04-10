@@ -8,8 +8,20 @@ const routes = [
   },
   {
     name: 'components',
-    component: () => import('../views/ComponentsView'),
-    path: '/components'
+    component: () => import('../views/components/ComponentsView'),
+    path: '/components/',
+    children: [
+      {
+        name: 'simple-components',
+        component: () => import('../views/components/SimpleComponents'),
+        path: 'simple-components'
+      },
+      {
+        name: 'other-components',
+        component: () => import('../views/components/OtherComponents'),
+        path: 'other-components'
+      }
+    ]
   }
 ]
 

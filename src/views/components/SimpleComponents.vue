@@ -1,5 +1,4 @@
 <template>
-
   <div class="components-list">
     <div class="component-name" @click="showingComponentName = 'Select'">Select</div>
     <div class="component-name" @click="showingComponentName = 'MultiSelect'">MultiSelect</div>
@@ -176,6 +175,10 @@ export default {
 </script>
 
 <style scoped>
+a{
+  color: white;
+  text-decoration: none;
+}
 .components-list{
   display: flex;
   flex-direction: row;
