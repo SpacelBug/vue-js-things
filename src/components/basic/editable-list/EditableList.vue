@@ -44,7 +44,6 @@ export default {
     removeElement(index) {
       let newList = this.modelValue
       newList.splice(index, 1)
-      console.log(index)
 
       this.$emit('update:modelValue', newList)
     }
