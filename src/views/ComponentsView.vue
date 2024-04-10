@@ -6,6 +6,7 @@
     <div class="component-name" @click="showingComponentName = 'DatetimeInput'">DatetimeInput</div>
     <div class="component-name" @click="showingComponentName = 'MultiUploader'">MultiUploader</div>
     <div class="component-name" @click="showingComponentName = 'Uploader'">Uploader</div>
+    <div class="component-name" @click="showingComponentName = 'EditableList'">EditableList</div>
   </div>
 
   <div class="main-box">
@@ -114,6 +115,13 @@
       </div>
     </div>
 
+    <div class="component-box" v-if="showingComponentName === 'EditableList'">
+      <div class="component-box-component">
+        <h3>Editable List</h3>
+        <editable-list v-model="testList" style="color: white;"/>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -123,6 +131,7 @@ import MultiSelect from "@/components/basic/multi-select/MultiSelect";
 import DateInput from "@/components/basic/datetime-input/DateInput";
 import MultiUploader from "@/components/basic/multi-uploader/MultiUploader";
 import VueUploader from "@/components/basic/uploader/VueUploader";
+import EditableList from "@/components/basic/editable-list/EditableList";
 
 export default {
   name: "ComponentsView",
@@ -132,9 +141,11 @@ export default {
     DateInput,
     MultiUploader,
     VueUploader,
+    EditableList,
   },
   data() { return {
     testValueSelect: null,
+    testList: [],
     options: [...Array(25).keys().map((index)=>{return `Some value ${index}`})],
     testValueMultiSelect: null,
     showingComponentName: null,
