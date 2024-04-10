@@ -7,6 +7,7 @@
     <div class="component-name" @click="showingComponentName = 'MultiUploader'">MultiUploader</div>
     <div class="component-name" @click="showingComponentName = 'Uploader'">Uploader</div>
     <div class="component-name" @click="showingComponentName = 'EditableList'">EditableList</div>
+    <div class="component-name" @click="showingComponentName = 'FilteredSelect'">FilteredSelect</div>
   </div>
 
   <div class="main-box">
@@ -95,7 +96,7 @@
         <multi-uploader style="color: black" :type="'images'"/>
       </div>
       <div class="component-box-description">
-        Компонент загрузки файлов
+        Компонент загрузки нескольких файлов
         <pre>
           props:
             important:
@@ -113,12 +114,31 @@
         <h3>Uploader</h3>
         <vue-uploader style="color: white;"/>
       </div>
+      <div class="component-box-description">
+        Компонент загрузки файла
+        <pre>
+          props:
+        </pre>
+      </div>
     </div>
 
     <div class="component-box" v-if="showingComponentName === 'EditableList'">
       <div class="component-box-component">
         <h3>Editable List</h3>
         <editable-list v-model="testList" style="color: white;"/>
+      </div>
+    </div>
+
+    <div class="component-box" v-if="showingComponentName === 'FilteredSelect'">
+      <div class="component-box-component">
+        <h3>Filtered Select</h3>
+        <filtered-select v-model="testValueSelect" :options="options"/>
+      </div>
+      <div class="component-box-description">
+        Выпадающий список с поиском значений
+        <pre>
+          props:
+        </pre>
       </div>
     </div>
 
@@ -132,6 +152,7 @@ import DateInput from "@/components/basic/datetime-input/DateInput";
 import MultiUploader from "@/components/basic/multi-uploader/MultiUploader";
 import VueUploader from "@/components/basic/uploader/VueUploader";
 import EditableList from "@/components/basic/editable-list/EditableList";
+import FilteredSelect from "@/components/basic/filtered-select/FilteredSelect";
 
 export default {
   name: "ComponentsView",
@@ -142,6 +163,7 @@ export default {
     MultiUploader,
     VueUploader,
     EditableList,
+    FilteredSelect,
   },
   data() { return {
     testValueSelect: null,
