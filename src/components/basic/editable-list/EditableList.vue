@@ -35,11 +35,13 @@ export default {
   },
   methods: {
     addNewElement() {
-      let newList = this.modelValue
-      newList.push(this.$refs.input.value)
+      if (this.$refs.input.value.trim()) {
+        let newList = this.modelValue
+        newList.push(this.$refs.input.value)
 
-      this.$refs.input.value = null
-      this.$emit('update:modelValue', newList)
+        this.$refs.input.value = null
+        this.$emit('update:modelValue', newList)
+      }
     },
     removeElement(index) {
       let newList = this.modelValue
