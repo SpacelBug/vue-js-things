@@ -9,7 +9,7 @@ const routes = [
   {
     name: 'components',
     component: () => import('../views/components/ComponentsView'),
-    path: '/components/',
+    path: '/components',
     children: [
       {
         name: 'simple-components',
