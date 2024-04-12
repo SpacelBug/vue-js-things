@@ -7,6 +7,7 @@
     <div class="component-name" @click="showingComponentName = 'Uploader'">Uploader</div>
     <div class="component-name" @click="showingComponentName = 'EditableList'">EditableList</div>
     <div class="component-name" @click="showingComponentName = 'FilteredSelect'">FilteredSelect</div>
+    <div class="component-name" @click="showingComponentName = 'EditableTable'">EditableTable</div>
   </div>
 
   <div class="main-box">
@@ -135,9 +136,16 @@
       </div>
       <div class="component-box-description">
         Выпадающий список с поиском значений
-        <pre>
+        <pre>some row
           props:
         </pre>
+      </div>
+    </div>
+
+    <div class="component-box" v-if="showingComponentName === 'EditableTable'">
+      <div class="component-box-component">
+        <h3>Editable Table</h3>
+        <editable-table :headers="tableHeader" :rows="tableData"/>
       </div>
     </div>
 
@@ -152,6 +160,7 @@ import MultiUploader from "@/components/basic/multi-uploader/MultiUploader";
 import VueUploader from "@/components/basic/uploader/VueUploader";
 import EditableList from "@/components/basic/editable-list/EditableList";
 import FilteredSelect from "@/components/basic/filtered-select/FilteredSelect";
+import EditableTable from "@/components/basic/editable-table/EditableTable";
 
 export default {
   name: "ComponentsView",
@@ -163,6 +172,7 @@ export default {
     VueUploader,
     EditableList,
     FilteredSelect,
+    EditableTable,
   },
   data() { return {
     testValueSelect: null,
@@ -170,6 +180,22 @@ export default {
     options: [...Array(25).keys().map((index)=>{return `Some value ${index}`})],
     testValueMultiSelect: null,
     showingComponentName: null,
+
+    tableHeader: {
+      name: {caption: 'Название', inputType: 'text', required: false},
+      tags: {caption: 'Теги', inputType: 'text', required: false},
+      person: {caption: 'Пользователь', inputType: 'text', required: false, subHeaders: {
+          personName: {caption: 'Имя', inputType: 'text'},
+          personAge: {caption: 'Возраст', inputType: 'number'},
+      }},
+    },
+    tableData: [
+      {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
+      {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
+      {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
+      {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
+      {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
+    ],
   }}
 }
 </script>
@@ -198,5 +224,8 @@ a{
   flex-direction: row;
   gap: 32px;
   padding: 16px;
+}
+.component-box-component{
+  width: 100%;
 }
 </style>
