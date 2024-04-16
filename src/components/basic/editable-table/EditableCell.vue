@@ -1,6 +1,6 @@
 <template>
   <template v-if="['text', 'number'].includes(type)">
-    <input :type="type" :value="modelValue">
+    <input :type="type" :value="modelValue" ref="input" @input="$emit('update:modelValue', $refs.input.value)">
   </template>
 
   <template v-else-if="type === 'select'">
@@ -17,7 +17,7 @@
 export default {
   name: "EditableCell",
   props: {
-    modelValue: {type: [String, Number]},
+    modelValue: {type: [String, Number, Array]},
     type: {type: String, require: true},
     options: {type: Array, default: null},
   },

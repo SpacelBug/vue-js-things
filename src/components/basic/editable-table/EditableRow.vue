@@ -2,7 +2,7 @@
   <div class="table-new-row">
     <div class="table-new-row-cells">
 
-      <template v-for="(value, key) in row">
+      <template v-for="(value, key) in modelValue">
 
         <template v-if="headers[key].hasOwnProperty('subHeaders')">
           <div class="table-row-multi-cell">
@@ -12,7 +12,7 @@
 
         <template v-else>
 
-          <editable-cell :type="headers[key].inputType" v-model="changedRow[key]"/>
+          <editable-cell :type="headers[key].inputType" v-model="modelValue[key]"/>
 
         </template>
 
@@ -31,12 +31,12 @@ import EditableCell from "@/components/basic/editable-table/EditableCell";
 
 export default {
   name: "NewRow",
-  emits: ['submitChanges', 'cancelChanges'],
+  emits: ['submitClick', 'cancelClick'],
   components: {
     EditableCell,
   },
   props: {
-    row: Object,
+    modelValue: Object,
     headers: Object,
 
     textAlign: String,
@@ -44,14 +44,15 @@ export default {
     additionalColor: String,
   },
   data() { return {
-    changedRow: this.row,
+    oldValue: structuredClone(this.modelValue),
   }},
   methods: {
     submitChanges() {
-      this.$emit('submitChanges', this.changedRow)
+      this.$emit('submitClick', this.modelValue)
     },
     cancelChanges() {
-      this.$emit('cancelChanges')
+      this.$emit('update:modelValue', this.oldValue)
+      this.$emit('cancelClick')
     },
   }
 }

@@ -18,19 +18,23 @@
       </template>
     </div>
     <div class="table-row-menu">
-      <div class="settings-icon" @click.prevent="$refs.rowContext.focus()" @mousedown.prevent/>
       <div
-          v-show="isShowContextRowMenu"
-          class="context-row-menu"
+          class="row-settings-button"
           tabindex="0"
-          ref="rowContext"
           @focusin="isShowContextRowMenu = true"
           @focusout="isShowContextRowMenu = false"
       >
-        Изменить
-        Скопировать
-        Удалить
+        <div class="settings-icon"/>
+        <div
+            v-show="isShowContextRowMenu"
+            class="context-row-menu"
+        >
+          <div class="context-row-menu-button" @click="isShowContextRowMenu = false; $emit('changeRowClick')">Изменить</div>
+          <div class="context-row-menu-button" @click="isShowContextRowMenu = false; copyRow">Скопировать</div>
+          <div class="context-row-menu-button" @click="isShowContextRowMenu = false; $emit('deleteRowClick')">Удалить</div>
+        </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -38,6 +42,7 @@
 <script>
 export default {
   name: "TableRow",
+  emits: ['rowClick', 'deleteRowClick', 'changeRowClick'],
   props: {
     row: Object,
     headers: Object,
@@ -48,7 +53,12 @@ export default {
   },
   data() { return {
     isShowContextRowMenu: false
-  }}
+  }},
+  methods: {
+    copyRow() {
+      navigator.clipboard.writeText(JSON.stringify(this.row))
+    }
+  }
 }
 </script>
 
@@ -91,12 +101,23 @@ export default {
   padding: 4px;
 }
 .context-row-menu{
+  position: absolute;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  position: absolute;
   padding: 8px;
+  right: 0;
   background-color: v-bind(additionalColor);
+}
+.context-row-menu-button{
+  user-select: none;
+  cursor: pointer;
+}
+.row-settings-button{
+  height: 100%;
+  aspect-ratio: 1/1;
+  width: fit-content;
 }
 /***Icons***/
 .settings-icon{

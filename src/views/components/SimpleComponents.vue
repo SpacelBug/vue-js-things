@@ -145,7 +145,13 @@
     <div class="component-box" v-if="showingComponentName === 'EditableTable'">
       <div class="component-box-component">
         <h3>Editable Table</h3>
-        <editable-table :headers="tableHeader" :rows="tableData"/>
+        <editable-table
+            :headers="tableHeader"
+            :rows="tableData"
+            @submitRowChanges="submitRowChanges"
+            @deleteRow="(index)=>{tableData.splice(index, 1)}"
+            @saveNewRow="(row)=>{tableData.unshift(row)}"
+        />
       </div>
     </div>
 
@@ -196,7 +202,12 @@ export default {
       {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
       {name: 'some row', tags: ['art', 'simple', 'cartoon'], person: {personName: 'dragon', personAge: 100}},
     ],
-  }}
+  }},
+  methods: {
+    submitRowChanges(row, index) {
+      this.tableData[index] = row
+    },
+  }
 }
 </script>
 
