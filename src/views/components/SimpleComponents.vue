@@ -8,6 +8,7 @@
     <div class="component-name" @click="showingComponentName = 'EditableList'">EditableList</div>
     <div class="component-name" @click="showingComponentName = 'FilteredSelect'">FilteredSelect</div>
     <div class="component-name" @click="showingComponentName = 'EditableTable'">EditableTable</div>
+    <div class="component-name" @click="showingComponentName = 'ColorPicker'">ColorPicker</div>
   </div>
 
   <div class="main-box">
@@ -155,6 +156,29 @@
       </div>
     </div>
 
+    <div class="component-box" v-if="showingComponentName === 'ColorPicker'">
+      <div class="component-box-component">
+        <h3 :style="`color: ${testColor}`">Color Picker</h3>
+        <color-picker
+            v-model="testColor"
+        />
+      </div>
+      <div class="component-box-description">
+        Компонент для выбора цвета
+        <pre>
+          props:
+            required:
+              modelValue: rgba String
+            additional:
+              placeholder - default = 'Select color'
+              backgroundColor - default = 'grey'
+              activeColor - default = 'lightgrey'
+              border - default = 'none'
+              boxShadow - default = 'none'
+        </pre>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -167,10 +191,12 @@ import VueUploader from "@/components/basic/uploader/VueUploader";
 import EditableList from "@/components/basic/editable-list/EditableList";
 import FilteredSelect from "@/components/basic/filtered-select/FilteredSelect";
 import EditableTable from "@/components/basic/editable-table/EditableTable";
+import ColorPicker from "@/components/other/color-picker/ColorPicker";
 
 export default {
   name: "ComponentsView",
   components: {
+    ColorPicker,
     VueSelect,
     MultiSelect,
     DateInput,
@@ -182,6 +208,7 @@ export default {
   },
   data() { return {
     testValueSelect: null,
+    testColor: null,
     testList: [],
     options: [...Array(25).keys().map((index)=>{return `Some value ${index}`})],
     testValueMultiSelect: null,
