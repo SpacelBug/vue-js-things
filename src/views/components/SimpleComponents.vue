@@ -9,6 +9,7 @@
     <div class="component-name" @click="showingComponentName = 'FilteredSelect'">FilteredSelect</div>
     <div class="component-name" @click="showingComponentName = 'EditableTable'">EditableTable</div>
     <div class="component-name" @click="showingComponentName = 'ColorPicker'">ColorPicker</div>
+    <div class="component-name" @click="showingComponentName = 'Switcher'">Switcher</div>
   </div>
 
   <div class="main-box">
@@ -179,6 +180,30 @@
       </div>
     </div>
 
+    <div class="component-box" v-if="showingComponentName === 'Switcher'">
+      <div class="component-box-component">
+        <h3>Switcher</h3>
+        <vue-switcher
+            v-model="switchValue"
+        />
+      </div>
+      <div class="component-box-description">
+        Переключатель
+        <pre>
+          props:
+            required:
+              modelValue: Boolean
+            additional:
+              backgroundColor - default = 'grey'
+              activeBackgroundColor - default = 'darkgrey'
+              caretColor - default = 'lightgrey'
+              activeCaretColor - default = 'whitesmoke'
+              border - default = 'none'
+              boxShadow - default = 'none'
+        </pre>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -192,10 +217,12 @@ import EditableList from "@/components/basic/editable-list/EditableList";
 import FilteredSelect from "@/components/basic/filtered-select/FilteredSelect";
 import EditableTable from "@/components/basic/editable-table/EditableTable";
 import ColorPicker from "@/components/other/color-picker/ColorPicker";
+import VueSwitcher from "@/components/basic/switcher/VueSwitcher";
 
 export default {
   name: "ComponentsView",
   components: {
+    VueSwitcher,
     ColorPicker,
     VueSelect,
     MultiSelect,
@@ -209,6 +236,7 @@ export default {
   data() { return {
     testValueSelect: null,
     testColor: null,
+    switchValue: null,
     testList: [],
     options: [...Array(25).keys().map((index)=>{return `Some value ${index}`})],
     testValueMultiSelect: null,
