@@ -216,7 +216,7 @@ import VueUploader from "@/components/basic/uploader/VueUploader";
 import EditableList from "@/components/basic/editable-list/EditableList";
 import FilteredSelect from "@/components/basic/filtered-select/FilteredSelect";
 import EditableTable from "@/components/basic/editable-table/EditableTable";
-import ColorPicker from "@/components/other/color-picker/ColorPicker";
+import ColorPicker from "@/components/basic/color-picker/ColorPicker";
 import VueSwitcher from "@/components/basic/switcher/VueSwitcher";
 
 export default {
