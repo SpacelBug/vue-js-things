@@ -11,6 +11,7 @@
     </div>
 
     <div v-show="isShowPalette" class="color-picker-main-box">
+      <div v-if="modelValue" class="hex-color">{{ hexColor }}</div>
       <div class="color-picker-main-box-brightness">
         <div class="brightness-cursor"/>
         <canvas
@@ -66,6 +67,24 @@ export default {
     brightnessCursorPos: [0,0],
     hueCaretPos: [0,0],
   }},
+  computed: {
+    hexColor() {
+      if (this.modelValue) {
+        let rgba = this.modelValue.match(/(\d{1,3},\s*){3}\d{1,3}/)[0].split(',')
+        let hex = '#'
+
+        hex += Number(rgba[0].trim()).toString(16)
+        hex += Number(rgba[1].trim()).toString(16)
+        hex += Number(rgba[2].trim()).toString(16)
+        hex += Number(rgba[3].trim()).toString(16)
+
+        return hex
+      } else {
+        return null
+      }
+
+    }
+  },
   updated() {
     this.setBrightnessCanvasBackground()
     this.setColorCanvasBackground()
@@ -167,6 +186,10 @@ export default {
   width: 25px;
   aspect-ratio: 1/1;
   background-color: v-bind(modelValue);
+}
+.hex-color{
+  text-transform: uppercase;
+  user-select: all;
 }
 .color-picker-main-box{
   position: absolute;
