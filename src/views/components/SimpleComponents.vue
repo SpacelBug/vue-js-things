@@ -10,6 +10,7 @@
     <div class="component-name" @click="showingComponentName = 'EditableTable'">EditableTable</div>
     <div class="component-name" @click="showingComponentName = 'ColorPicker'">ColorPicker</div>
     <div class="component-name" @click="showingComponentName = 'Switcher'">Switcher</div>
+    <div class="component-name" @click="showingComponentName = 'ContextMenu'">ContextMenu</div>
   </div>
 
   <div class="main-box">
@@ -204,6 +205,28 @@
       </div>
     </div>
 
+    <div class="component-box" v-if="showingComponentName === 'ContextMenu'">
+      <div class="component-box-component" @contextmenu.prevent="callContextMenu" style="width: 100%; height: 800px">
+        <h3>ContextMenu</h3>
+        <context-menu ref="contextMenu">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="contextButtons">Copy</div>
+            <div class="contextButtons">Paste</div>
+            <div class="contextButtons">Delete</div>
+          </div>
+        </context-menu>
+      </div>
+      <div class="component-box-description">
+        Контекстное меню (опции задаются с помощью slot). Для вывода меню используется метод showContextMenu
+        <pre>
+          props:
+            backgroundColor - default = 'grey'
+            border - default = 'none'
+            boxShadow - default = 'none'
+        </pre>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -218,6 +241,7 @@ import FilteredSelect from "@/components/basic/filtered-select/FilteredSelect";
 import EditableTable from "@/components/basic/editable-table/EditableTable";
 import ColorPicker from "@/components/basic/color-picker/ColorPicker";
 import VueSwitcher from "@/components/basic/switcher/VueSwitcher";
+import ContextMenu from "@/components/basic/context-menu/ContextMenu";
 
 export default {
   name: "ComponentsView",
@@ -232,6 +256,7 @@ export default {
     EditableList,
     FilteredSelect,
     EditableTable,
+    ContextMenu,
   },
   data() { return {
     testValueSelect: null,
@@ -241,6 +266,7 @@ export default {
     options: [...Array(25).keys().map((index)=>{return `Some value ${index}`})],
     testValueMultiSelect: null,
     showingComponentName: null,
+    isShowContextMenu: false,
 
     tableHeader: {
       name: {caption: 'Название', inputType: 'text', required: false},
@@ -262,6 +288,9 @@ export default {
     submitRowChanges(row, index) {
       this.tableData[index] = row
     },
+    callContextMenu() {
+      this.$refs.contextMenu.showContextMenu()
+    }
   }
 }
 </script>
@@ -293,5 +322,9 @@ a{
 }
 .component-box-component{
   width: 100%;
+}
+.contextButtons:hover{
+  cursor: pointer;
+  color: dodgerblue;
 }
 </style>
