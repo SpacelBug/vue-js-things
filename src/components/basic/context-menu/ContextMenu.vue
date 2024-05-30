@@ -33,21 +33,20 @@ export default {
       this.posStringVertical = ''
 
       if (this.drawDirection().horizontalDirection === "toLeft") {
-        this.posStringHorizontal = `left: ${event.clientX}px`
+        this.posStringHorizontal = `left: ${event.pageX}px`
       } else {
-        this.posStringHorizontal = `right: ${window.innerWidth - event.clientX}px`
+        this.posStringHorizontal = `right: ${window.innerWidth - event.pageX}px`
       }
 
       if (this.drawDirection().verticalDirection === "toBottom") {
-        this.posStringVertical = `bottom: ${window.innerHeight - event.clientY}px`
+        this.posStringVertical = `bottom: ${window.innerHeight - event.pageY}px`
       } else {
-        this.posStringVertical = `top: ${event.clientY + window.scrollY}px`
+        this.posStringVertical = `top: ${event.pageY}px`
       }
 
-      this.$refs.contextMenu.focus()
+      this.$refs.contextMenu.focus({preventScroll: true})
     },
     drawDirection() {
-      console.log(event.clientY)
       let verticalDirection = event.clientY > (window.innerHeight / 2) ? 'toBottom' : 'toTop'
       let horizontalDirection = event.clientX < (window.innerWidth / 2) ? 'toLeft' : 'toRight'
 
