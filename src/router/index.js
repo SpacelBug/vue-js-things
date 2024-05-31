@@ -12,6 +12,11 @@ const routes = [
     path: '/animations'
   },
   {
+    name: 'themes',
+    component: () => import('../views/themes/ThemeView'),
+    path: '/themes'
+  },
+  {
     name: 'components',
     component: () => import('../views/components/ComponentsView'),
     path: '/components',

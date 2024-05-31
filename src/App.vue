@@ -5,6 +5,7 @@
       <router-link to="graphs">D3FC graphs</router-link>
       <router-link to="animations">Animations</router-link>
       <router-link to="components">Components</router-link>
+      <router-link to="themes">Themes</router-link>
     </div>
   </div>
   <router-view></router-view>
