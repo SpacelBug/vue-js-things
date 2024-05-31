@@ -181,6 +181,7 @@ export default {
   padding: 8px 16px;
   width: fit-content;
   gap: 8px;
+  z-index: 1;
 }
 .selected-color{
   width: 25px;
@@ -193,6 +194,7 @@ export default {
 }
 .color-picker-main-box{
   position: absolute;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 16px;
