@@ -10,6 +10,23 @@ const routes = [
     name: 'animations',
     component: () => import('../views/animations/AnimationsView'),
     path: '/animations'
+  },
+  {
+    name: 'components',
+    component: () => import('../views/components/ComponentsView'),
+    path: '/components',
+    children: [
+      {
+        name: 'simple-components',
+        component: () => import('../views/components/SimpleComponents'),
+        path: 'simple-components'
+      },
+      {
+        name: 'other-components',
+        component: () => import('../views/components/OtherComponents'),
+        path: 'other-components'
+      }
+    ]
   }
 ]
 
