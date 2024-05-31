@@ -1,0 +1,13 @@
+:root{
+    /*Colors*/
+    --bg-color: #1a1a1a;
+    --panel-color: #6b6b6b;
+    --border-color: #818181;
+    --primary-color: #3d3d3d;
+    --additional-color: #92a283;
+    --contrast-color: #d9935e;
+    --font-color: white;
+    --contrast-font-color: #1a1a1a;
+    /*Border*/
+    --panel-border: solid var(--border-color) 1px;
+}
