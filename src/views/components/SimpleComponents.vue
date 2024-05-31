@@ -21,7 +21,10 @@
         <vue-select
             v-model="testValueSelect"
             :options="options"
-            style="width: 200px; color: black"
+            style="width: 200px"
+            :background-color="'var(--panel-color)'"
+            :active-color="'var(--contrast-color)'"
+            :border="'var(--panel-border)'"
         />
       </div>
       <div class="component-box-description">
@@ -48,7 +51,10 @@
         <multi-select
             v-model="testValueMultiSelect"
             :options="options"
-            style="width: 200px; color: black"
+            style="width: 200px"
+            :background-color="'var(--panel-color)'"
+            :active-color="'var(--contrast-color)'"
+            :border="'var(--panel-border)'"
         />
       </div>
       <div class="component-box-description">
@@ -72,7 +78,12 @@
     <div class="component-box" v-if="showingComponentName === 'DatetimeInput'">
       <div class="component-box-component">
         <h3>Datetime input</h3>
-        <date-input style="color: black"/>
+        <date-input
+          :background-color="'var(--panel-color)'"
+          :additional-color="'var(--additional-color)'"
+          :active-color="'var(--contrast-color)'"
+          :border="'var(--panel-border)'"
+        />
       </div>
       <div class="component-box-description">
         Компонент выбора даты
@@ -96,7 +107,12 @@
     <div class="component-box" v-if="showingComponentName === 'MultiUploader'">
       <div class="component-box-component">
         <h3>MultiUploader</h3>
-        <multi-uploader style="color: black" :type="'images'"/>
+        <multi-uploader
+            :type="'images'"
+            :background-color="'var(--panel-color)'"
+            :additional-color="'var(--additional-color)'"
+            :border="'var(--panel-border)'"
+        />
       </div>
       <div class="component-box-description">
         Компонент загрузки нескольких файлов
@@ -115,7 +131,10 @@
     <div class="component-box" v-if="showingComponentName === 'Uploader'">
       <div class="component-box-component">
         <h3>Uploader</h3>
-        <vue-uploader style="color: white;"/>
+        <vue-uploader
+          :background-color="'var(--panel-color)'"
+          :border="'var(--panel-border)'"
+        />
       </div>
       <div class="component-box-description">
         Компонент загрузки файла
@@ -128,14 +147,24 @@
     <div class="component-box" v-if="showingComponentName === 'EditableList'">
       <div class="component-box-component">
         <h3>Editable List</h3>
-        <editable-list v-model="testList" style="color: white;"/>
+        <editable-list
+            v-model="testList"
+            :border="'var(--panel-border)'"
+            :background-color="'var(--panel-color)'"
+        />
       </div>
     </div>
 
     <div class="component-box" v-if="showingComponentName === 'FilteredSelect'">
       <div class="component-box-component">
         <h3>Filtered Select</h3>
-        <filtered-select v-model="testValueSelect" :options="options"/>
+        <filtered-select
+            v-model="testValueSelect"
+            :options="options"
+            :border="'var(--panel-border)'"
+            :background-color="'var(--panel-color)'"
+            :active-color="'var(--contrast-color)'"
+        />
       </div>
       <div class="component-box-description">
         Выпадающий список с поиском значений
@@ -154,6 +183,10 @@
             @submitRowChanges="submitRowChanges"
             @deleteRow="(index)=>{tableData.splice(index, 1)}"
             @saveNewRow="(row)=>{tableData.unshift(row)}"
+            :border="'var(--panel-border)'"
+            :background-color="'var(--panel-color)'"
+            :active-color="'var(--contrast-color)'"
+            :additional-color="'var(--additional-color)'"
         />
       </div>
     </div>
@@ -163,6 +196,9 @@
         <h3 :style="`color: ${testColor}`">Color Picker</h3>
         <color-picker
             v-model="testColor"
+            :border="'var(--panel-border)'"
+            :background-color="'var(--panel-color)'"
+            :active-color="'var(--contrast-color)'"
         />
       </div>
       <div class="component-box-description">
@@ -186,6 +222,11 @@
         <h3>Switcher</h3>
         <vue-switcher
             v-model="switchValue"
+            :border="'var(--panel-border)'"
+            :background-color="'var(--panel-color)'"
+            :active-background-color="'var(--panel-color)'"
+            :active-caret-color="'var(--contrast-color)'"
+            :caret-color="'var(--additional-color)'"
         />
       </div>
       <div class="component-box-description">
@@ -208,7 +249,11 @@
     <div class="component-box" v-if="showingComponentName === 'ContextMenu'">
       <div class="component-box-component" @contextmenu.prevent="callContextMenu" style="width: 100%; height: 800px">
         <h3>ContextMenu</h3>
-        <context-menu ref="contextMenu">
+        <context-menu
+            ref="contextMenu"
+            :background-color="'var(--panel-color)'"
+            :border="'var(--panel-border)'"
+        >
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <div class="contextButtons">Copy</div>
             <div class="contextButtons">Paste</div>
@@ -297,7 +342,7 @@ export default {
 
 <style scoped>
 a{
-  color: white;
+  color: var(--font-color);
   text-decoration: none;
 }
 .components-list{
@@ -325,6 +370,6 @@ a{
 }
 .contextButtons:hover{
   cursor: pointer;
-  color: dodgerblue;
+  color: var(--contrast-color);
 }
 </style>

@@ -8,7 +8,13 @@
     <div class="component-box" v-if="showingComponentName === 'ImageFilter'">
       <div class="component-box-component">
         <h3>Image Filter</h3>
-        <image-filter :src="require('@/components/other/image-filter/test-image.png')"></image-filter>
+        <image-filter
+            :src="require('@/components/other/image-filter/test-image.png')"
+            :background-color="'var(--bg-color)'"
+            :additional-color="'var(--additional-color)'"
+            :active-color="'var(--contrast-color)'"
+            :border="'var(--panel-border)'"
+        />
       </div>
       <div class="component-box-description">
         <h2>Компонент Image Filter</h2>

@@ -15,7 +15,7 @@ export default {
 
 <style scoped>
 a{
-  color: white;
+  color: var(--font-color);
   text-decoration: none;
 }
 .pages{

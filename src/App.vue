@@ -26,8 +26,8 @@ export default {
 
 <style>
 body{
-  background-color: #2d2c2c;
-  color: white;
+  background-color: var(--bg-color);
+  color: var(--font-color);
   margin: 0;
 }
 h2{
@@ -35,7 +35,7 @@ h2{
   padding: 16px;
 }
 .header{
-  background-color: #212020;
+  background-color: var(--bg-color);
 }
 .pages{
   display: flex;
@@ -46,6 +46,6 @@ h2{
 }
 .pages a{
   font-size: 18px;
-  color: white;
+  color: var(--font-color)
 }
 </style>
