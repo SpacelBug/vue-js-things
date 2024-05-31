@@ -18,6 +18,9 @@ export default {
   components: {
 
   },
+  beforeMount() {
+    this.$store.dispatch('themeModule/getColors')
+  },
   data() { return {
 
     }
