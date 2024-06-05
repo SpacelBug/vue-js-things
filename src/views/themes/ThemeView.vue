@@ -9,6 +9,12 @@
       <button @click="$store.dispatch('themeModule/changeTheme', 'light')">
         Light
       </button>
+      <button @click="$store.dispatch('themeModule/changeTheme', 'green')">
+        Green
+      </button>
+      <button @click="$store.dispatch('themeModule/changeTheme', 'qwerty')">
+        Non existed theme
+      </button>
     </div>
     <div class="preview-box">
       <div class="preview-element">

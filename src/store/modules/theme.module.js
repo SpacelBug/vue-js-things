@@ -11,32 +11,22 @@ export default {
       '--font-color',
       '--contrast-font-color',
     ],
-    defaultTheme: {},
-    lightTheme: {
-      '--bg-color': 'white',
-      '--panel-color': 'lightblue',
-      '--border-color': 'grey',
-      '--primary-color': 'grey',
-      '--additional-color': 'blue',
-      '--contrast-color': 'red',
-      '--font-color': 'black',
-      '--contrast-font-color': 'white',
+    themes: {
+      default: [],
+      light: ['white', 'lightblue', 'grey', 'grey', 'blue', 'red', 'black', 'white'],
+      green: ['#2f4736', '#5c7a65', '#353b37', '#a5cfb3', '#d4ffe2', '#ffecd4', 'black', 'white'],
     },
     themeName: localStorage.getItem('themeName') ? localStorage.getItem('themeName') : 'default',
   },
   getters: {
-    themeColors(state) {
-      if (state.themeName === 'default') {
-        return state.defaultTheme
-      } else {
-        return state.lightTheme
-      }
+    themes(state) {
+      return state.themes
     },
   },
   mutations: {
     setDefaultTheme(state, payload) {
-      for (let key in payload) {
-        state.defaultTheme[key] = payload[key]
+      for (let color of payload) {
+        state.themes['default'].push(color)
       }
     },
     changeActiveThemeName(state, payload) {
@@ -48,12 +38,18 @@ export default {
     getColors(context) {
       let style = getComputedStyle(document.documentElement)
       let colors = {}
+      for (let name of context.state.variableNames) {
+        colors[name] = null
+      }
 
       for (let name of context.state.variableNames) {
         colors[name] = style.getPropertyValue(name)
       }
 
-      context.commit('setDefaultTheme', colors)
+      console.log(Object.values(colors))
+
+      context.commit('setDefaultTheme', Object.values(colors))
+
       context.dispatch('setTheme')
     },
     changeTheme(context, themeName) {
@@ -62,11 +58,23 @@ export default {
       context.dispatch('setTheme')
     },
     setTheme(context) {
-      let style = document.documentElement.style
-      let colors = context.state.themeName === 'default' ? context.state.defaultTheme : context.state.lightTheme
+      let themeName = context.state.themeName
 
-      for (let key in colors) {
-        style.setProperty(key, colors[key])
+      if (context.state.themes.hasOwnProperty(themeName)) {
+        let style = document.documentElement.style
+        let colors = []
+
+        if (themeName === 'default') {
+          colors = context.state.themes['default']
+        } else {
+          colors = context.state.themes[themeName]
+        }
+
+        for (let index in context.state.variableNames) {
+          style.setProperty(context.state.variableNames[index], colors[index])
+        }
+      } else {
+        console.debug('Theme doesnt exist')
       }
     }
   },
