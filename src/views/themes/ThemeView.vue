@@ -31,33 +31,9 @@
 </template>
 
 <script>
-import ColorPicker from "@/components/basic/color-picker/ColorPicker";
 
 export default {
   name: "ThemeView",
-  components: {
-    ColorPicker,
-  },
-  data() { return {
-    colors: {},
-    newColors: {},
-  }},
-  mounted() {
-    let style = getComputedStyle(document.body)
-    this.colors = {
-      '--bg-color': style.getPropertyValue('--bg-color'),
-      '--panel-color': style.getPropertyValue('--panel-color'),
-      '--border-color': style.getPropertyValue('--border-color'),
-      '--primary-color': style.getPropertyValue('--primary-color'),
-      '--additional-color': style.getPropertyValue('--additional-color'),
-      '--contrast-color': style.getPropertyValue('--contrast-color'),
-      '--font-color': style.getPropertyValue('--font-color'),
-      '--contrast-font-color': style.getPropertyValue('--contrast-font-color'),
-    }
-  },
-  methods: {
-
-  }
 }
 </script>
 
@@ -69,19 +45,6 @@ export default {
   margin: 16px;
   gap: 16px;
   background-color: var(--primary-color);
-}
-.current-color{
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-}
-.current-color-name{
-  width: 250px;
-  height: 20px;
-}
-.current-color-value{
-  height: 20px;
-  width: 20px;
 }
 .preview-box{
   display: flex;
