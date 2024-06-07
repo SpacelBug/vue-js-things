@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from "@/store";
 
 const routes = [
   {
@@ -15,6 +16,11 @@ const routes = [
     name: 'themes',
     component: () => import('../views/themes/ThemeView'),
     path: '/themes'
+  },
+  {
+    name: 'auth',
+    component: () => import('../views/authorization/AuthorizationView'),
+    path: '/auth'
   },
   {
     name: 'components',
@@ -38,6 +44,12 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach(async (to, from) => {
+  if (!await store.dispatch('authorizationModule/getUser') && to.name !== 'auth') {
+    return { name: 'auth' }
+  }
 })
 
 export default router
