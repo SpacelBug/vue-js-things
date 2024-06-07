@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import themeModule from "@/store/modules/theme.module";
+import authorizationModule from "@/store/modules/authorization.module";
 
 export default createStore({
   state: {
@@ -11,6 +12,7 @@ export default createStore({
   actions: {
   },
   modules: {
-    themeModule
+    themeModule,
+    authorizationModule
   }
 })
