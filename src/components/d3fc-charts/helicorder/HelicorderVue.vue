@@ -427,6 +427,16 @@ export default {
                 this.stretchingCursorHeight = this.cursorStartLineIndex !== index + 1 ?
                 this.lineHeight * ((index + 1) - this.cursorStartLineIndex) : this.lineHeight
               }
+
+              // Авто прокрутка графиков влево/вправо, если курсор находится в пределах 100 пикселей от границы
+              let relativeMousePos = Math.abs(this.$refs.target.getBoundingClientRect().x - event.x)
+              let scrollLength = this.$refs.target.scrollWidth - this.$refs.target.offsetWidth
+
+              if (relativeMousePos > (this.$refs.target.offsetWidth - 100)) {
+                this.$refs.target.scroll(scrollLength, 0)
+              } else if (relativeMousePos < 100) {
+                this.$refs.target.scrollLeft = 0
+              }
             }))
             .on('mousedown', (()=>{
               if (event.which === 1) {
@@ -498,6 +508,7 @@ export default {
 <style scoped>
 .main-container{
   display: grid;
+  max-width: 100%;
   grid-gap: 10px;
   grid-template: "filters filters"
                  "header header"
@@ -554,14 +565,17 @@ export default {
 .graph-container{
   overflow: hidden;
   position: relative;
-  grid-area: graph;
   z-index: 1;
+  grid-area: graph;
+  max-width: 100%;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
 }
 .vertical-lines{
   pointer-events: none;
   position: absolute;
   top: 0;
-  width: 100%;
+  width: v-bind(width + 'px');
   height: 100%;
   display: flex;
   justify-content: space-between;
